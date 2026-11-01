@@ -1,0 +1,1581 @@
+<div style="font:14px Arial,sans-serif;padding:12px 18px;background:#4e0f27;color:white"><b>Marta Sanz Manzanedo</b> · <a style="color:white" href="https://sites.google.com/view/formaciniagparalaenseanzadeele/inicio" target="_top">Volver al inicio</a></div><title>Creador de prompts ELE</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Concepto: taller de color. Cabecera con manchas de pintura, una tarjeta por apartado (cada una con su color) y el prompt en una tarjeta oscura fija. */
+:root {
+  --bg: #F6F3F8;
+  --surface: #FFFFFF;
+  --field: #FFFFFF;
+  --ink: #1D1630;
+  --muted: #645B7B;
+  --line: #E2DAEA;
+  --accent: #D32F34;
+  --on-accent: #FFFFFF;
+  --glow: rgba(242, 107, 56, .16);
+  --ok: #14704B;
+  --c1: #D32F34;
+  --c2: #F26B38;
+  --c3: #FFB627;
+  --c4: #2FA58B;
+  --c5: #2F6FDE;
+  --c6: #8A4FD0;
+  --panel: #1D1630;
+  --panel-ink: #F6F1FB;
+  --panel-muted: #B6AACB;
+  --shadow: 0 20px 44px -26px rgba(29, 22, 48, .55);
+  --f-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --f-body: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15101F;
+    --surface: #1E1730;
+    --field: #150F24;
+    --ink: #F3EEF9;
+    --muted: #A99FBF;
+    --line: #352B4D;
+    --accent: #FF6B6B;
+    --on-accent: #1A0F14;
+    --glow: rgba(242, 107, 56, .15);
+    --ok: #5FD3A0;
+    --panel: #2A1F45;
+    --shadow: 0 20px 44px -26px rgba(0, 0, 0, .8);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15101F;
+  --surface: #1E1730;
+  --field: #150F24;
+  --ink: #F3EEF9;
+  --muted: #A99FBF;
+  --line: #352B4D;
+  --accent: #FF6B6B;
+  --on-accent: #1A0F14;
+  --glow: rgba(242, 107, 56, .15);
+  --ok: #5FD3A0;
+  --panel: #2A1F45;
+  --shadow: 0 20px 44px -26px rgba(0, 0, 0, .8);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  background-color: var(--bg);
+  background-image: radial-gradient(60rem 26rem at 88% -6%, var(--glow), transparent 70%);
+  background-repeat: no-repeat;
+  color: var(--ink);
+  font: 400 1rem/1.5 var(--f-body);
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+
+.wrap {
+  max-width: 78rem;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Cabecera */
+.top { padding-block: 2.5rem 1.5rem; }
+.hero { display: grid; gap: 1.5rem; align-items: center; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 800px) { .hero { grid-template-columns: minmax(0, 1fr) auto; gap: 2.5rem; } }
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  margin: 0 0 .9rem;
+  font: 500 .75rem/1 var(--f-mono);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.eyebrow::before { content: ""; width: .6rem; height: .6rem; border-radius: 50%; background: var(--accent); }
+h1 {
+  margin: 0 0 .9rem;
+  font: 800 clamp(2.2rem, 5.4vw, 3.9rem)/1 var(--f-display);
+  letter-spacing: -.03em;
+  text-wrap: balance;
+}
+h1 mark {
+  color: inherit;
+  background: linear-gradient(transparent 62%, var(--c3) 62%, var(--c3) 92%, transparent 92%);
+  padding-inline: .08em;
+}
+.lead { margin: 0 0 1.5rem; max-width: 56ch; color: var(--muted); font-size: 1.1rem; }
+.presets { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; }
+.presets .lab { font: 500 .75rem/1 var(--f-mono); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); margin-right: .25rem; }
+.btn {
+  min-height: 2.5rem;
+  padding: .45rem 1rem;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  cursor: pointer;
+  font-size: .92rem;
+  font-weight: 600;
+  transition: border-color .15s, transform .15s;
+}
+.btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+.btn.ghost { background: transparent; color: var(--muted); font-weight: 400; }
+.btn:focus-visible, .primary:focus-visible, select:focus-visible, input[type="text"]:focus-visible, textarea:focus-visible, summary:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+.note { margin: .9rem 0 0; font-size: .92rem; font-weight: 600; color: var(--ok); }
+
+/* Manchas decorativas */
+.dabs { display: flex; align-items: flex-end; font-size: 1rem; padding-right: .5rem; }
+.dabs i { display: block; border-radius: 50%; margin-left: -1.1em; opacity: .95; }
+.dabs i:nth-child(1) { width: 5.6em; height: 5.6em; background: var(--c1); margin-left: 0; }
+.dabs i:nth-child(2) { width: 3.4em; height: 3.4em; background: var(--c3); }
+.dabs i:nth-child(3) { width: 4.6em; height: 4.6em; background: var(--c2); }
+.dabs i:nth-child(4) { width: 2.6em; height: 2.6em; background: var(--c4); }
+.dabs i:nth-child(5) { width: 3.8em; height: 3.8em; background: var(--c5); }
+.dabs i:nth-child(6) { width: 2.2em; height: 2.2em; background: var(--c6); }
+@media (max-width: 799px) { .dabs { font-size: .55rem; } }
+
+/* Distribución */
+.layout {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr);
+  padding-block: .5rem 6.5rem;
+}
+@media (min-width: 960px) {
+  .layout { grid-template-columns: minmax(0, 1fr) minmax(0, 26rem); gap: 2rem; padding-block-end: 3rem; }
+}
+
+/* Formulario: una tarjeta por apartado */
+#form { display: grid; gap: 1.25rem; min-width: 0; }
+.sec {
+  padding: 1.5rem 1.6rem;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  min-width: 0;
+}
+.sec > .check { margin-bottom: 1rem; }
+.sec > :last-child { margin-bottom: 0; }
+.sec h2 {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  margin: 0 0 1.25rem;
+  font: 700 1.4rem/1.2 var(--f-display);
+  letter-spacing: -.015em;
+}
+.sec h2::before { content: ""; flex: none; width: 1rem; height: 1rem; border-radius: 50%; background: var(--c1); }
+.sec[data-c="1"] h2::before { background: var(--c1); }
+.sec[data-c="2"] h2::before { background: var(--c2); }
+.sec[data-c="3"] h2::before { background: var(--c3); }
+.sec[data-c="4"] h2::before { background: var(--c4); }
+.sec[data-c="5"] h2::before { background: var(--c5); }
+.sec[data-c="6"] h2::before { background: var(--c6); }
+
+.fld { display: grid; gap: .5rem; margin: 0 0 1.4rem; min-width: 0; }
+fieldset.fld { border: 0; padding: 0; }
+.fld > legend, .fld > label.lab { padding: 0; font-weight: 700; font-size: .95rem; }
+.fld > legend { margin-bottom: .5rem; float: none; }
+.opt { font-weight: 400; color: var(--muted); }
+.hint { margin: 0; font-size: .88rem; color: var(--muted); }
+
+input[type="text"], textarea, select {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: .55rem .8rem;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: var(--field);
+  transition: border-color .15s;
+}
+input[type="text"]:hover, textarea:hover, select:hover { border-color: var(--muted); }
+textarea { resize: vertical; min-height: 5.5rem; }
+input[type="text"]:disabled { opacity: .5; cursor: not-allowed; }
+input:disabled + span { opacity: .55; }
+
+.chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+.chip { position: relative; display: block; }
+.chip input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.chip .t {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  min-height: 2.6rem;
+  padding: .45rem 1rem;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--field);
+  font-size: .94rem;
+  line-height: 1.2;
+  transition: border-color .15s, background-color .15s, transform .15s;
+}
+.chip:hover .t { border-color: var(--accent); transform: translateY(-1px); }
+.chip input:checked + .t { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
+.chip input:focus-visible + .t { outline: 3px solid var(--ink); outline-offset: 2px; }
+.chip input:disabled { cursor: not-allowed; }
+.chip input:disabled + .t { opacity: .5; transform: none; }
+.sw { display: inline-flex; padding-left: .25rem; }
+.sw i { display: block; width: 1rem; height: 1rem; border-radius: 50%; margin-left: -.3rem; border: 2px solid var(--field); }
+.chip input:checked + .t .sw i { border-color: var(--accent); }
+
+.checks { display: grid; gap: .25rem 1.25rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+.check { display: flex; align-items: flex-start; gap: .65rem; padding: .35rem 0; cursor: pointer; font-size: .96rem; }
+.check input { margin: .25rem 0 0; width: 1.1rem; height: 1.1rem; accent-color: var(--accent); flex: none; }
+
+/* Tarjeta del prompt */
+.panel {
+  align-self: start;
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 24px;
+  background: var(--panel);
+  color: var(--panel-ink);
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+@media (min-width: 960px) {
+  .panel { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow: auto; }
+}
+.panel h2 { margin: 0; font: 700 1.5rem/1.2 var(--f-display); letter-spacing: -.015em; }
+.meta { margin: 0; font: 400 .75rem/1.4 var(--f-mono); letter-spacing: .03em; color: var(--panel-muted); }
+.out {
+  padding: 1.1rem 1.2rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .07);
+  font-size: .98rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+.out:focus-visible { outline: 3px solid var(--c3); outline-offset: 2px; }
+.out .ln { margin: 0 0 .55rem; }
+.out .ln:last-child { margin-bottom: 0; }
+.out .lab { color: var(--c3); font-weight: 700; }
+.out .sep { margin-top: .9rem; padding-top: .9rem; border-top: 1px dashed rgba(255, 255, 255, .28); }
+.out .mj { display: block; margin-top: .65rem; font: 400 .85rem/1.5 var(--f-mono); color: var(--c3); }
+.primary {
+  min-height: 3rem;
+  padding: .65rem 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform .15s, filter .15s;
+}
+.primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.panel .primary:focus-visible { outline: 3px solid var(--c3); }
+.status { margin: 0; min-height: 1.3em; font-size: .9rem; font-weight: 600; color: #7EE0B5; }
+.checks-list { margin: 0; padding: 0; list-style: none; display: grid; gap: .55rem; }
+.checks-list li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .6rem; align-items: start; font-size: .9rem; color: var(--panel-ink); }
+.badge { padding: .15rem .5rem; border-radius: 999px; font: 500 .68rem/1.5 var(--f-mono); letter-spacing: .05em; text-transform: uppercase; }
+.badge.need { background: rgba(255, 120, 100, .22); color: #FFB4A6; }
+.badge.tip { background: rgba(255, 182, 39, .2); color: #FFD58A; }
+.panel details { border-top: 1px solid rgba(255, 255, 255, .14); padding-top: .8rem; }
+.panel summary { cursor: pointer; font-weight: 600; font-size: .95rem; }
+.panel summary:focus-visible { outline: 3px solid var(--c3); }
+.panel details ul { margin: .6rem 0 0; padding-left: 1.1rem; font-size: .9rem; color: var(--panel-muted); display: grid; gap: .4rem; }
+
+/* Barra inferior en pantallas estrechas */
+.dock {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  padding: .65rem max(16px, env(safe-area-inset-right, 0px)) calc(.65rem + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+}
+.dock .primary { flex: 1; }
+@media (min-width: 960px) { .dock { display: none; } }
+@media (max-width: 520px) { .sec { padding: 1.25rem 1.1rem; border-radius: 16px; } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+[hidden] { display: none !important; }
+.modo-lab { padding: 0; margin-bottom: .6rem; font: 500 .75rem/1 var(--f-mono); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.modo { border: 0; padding: 0; margin: 0 0 1.25rem; min-width: 0; }
+.modo .chip .t { min-height: 3rem; padding: .6rem 1.6rem; font-size: 1.05rem; font-weight: 700; }
+#presetBtns { display: contents; }
+.src { padding-block: 0 2rem; font-size: .85rem; color: var(--muted); }
+.src p { margin: 0; max-width: 70ch; }
+.src a { color: var(--accent); }
+@media (max-width: 959px) { .src { padding-bottom: 6rem; } }
+</style>
+
+<header class="top">
+  <div class="wrap hero">
+    <div>
+      <p class="eyebrow">Para docentes de ELE</p>
+      <h1>Creador de prompts de <mark id="h1word">imagen</mark></h1>
+      <p class="lead">Elige finalidad, escena, formato y estilo. Elige si quieres una imagen o un vídeo. El prompt se actualiza solo y queda listo para pegar en tu generador.</p>
+      <fieldset class="modo">
+        <legend class="modo-lab">¿Qué quieres crear?</legend>
+        <div class="chips" id="g-modo"></div>
+      </fieldset>
+      <div class="presets" role="group" aria-label="Ejemplos para empezar">
+        <span class="lab">Ejemplos</span>
+        <span id="presetBtns"></span>
+        <button type="button" class="btn ghost" id="reset">Empezar de cero</button>
+      </div>
+      <p class="note" id="exampleNote" hidden>Ejemplo cargado. Cambia cualquier opción o pulsa «Empezar de cero».</p>
+    </div>
+    <div class="dabs" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+</header>
+
+<main class="wrap layout">
+  <form id="form" autocomplete="off">
+
+    <section class="sec" data-c="1">
+      <h2>Finalidad</h2>
+      <fieldset class="fld">
+        <legend>Nivel del grupo</legend>
+        <div class="chips" id="g-nivel"></div>
+      </fieldset>
+      <fieldset class="fld" id="f-kind">
+        <legend>Tipo de recurso</legend>
+        <div class="chips" id="g-kind"></div>
+      </fieldset>
+      <fieldset class="fld" id="f-kindV" hidden>
+        <legend>Tipo de recurso</legend>
+        <div class="chips" id="g-kindV"></div>
+      </fieldset>
+      <fieldset class="fld" id="f-nDif" hidden>
+        <legend>Número de diferencias</legend>
+        <div class="chips" id="g-nDif"></div>
+        <p class="hint">Para un nivel inicial suelen bastar 5. Los generadores pueden no respetar la cifra exacta: cuéntalas antes de usar la imagen.</p>
+      </fieldset>
+      <fieldset class="fld" id="f-nVin" hidden>
+        <legend>Número de viñetas</legend>
+        <div class="chips" id="g-nVin"></div>
+        <p class="hint">Con pocas viñetas el resultado suele ser más fiable. Para comics largos, genera cada viñeta por separado.</p>
+      </fieldset>
+    </section>
+
+    <section class="sec" data-c="2">
+      <h2>Escena</h2>
+      <div class="fld">
+        <label class="lab" for="tema" id="temaLabel">¿Qué debe mostrar la imagen?</label>
+        <textarea id="tema" name="tema" rows="3" placeholder="Ej.: Un mercado de barrio un sábado por la mañana, con puestos de fruta y un vendedor que ofrece una muestra"></textarea>
+        <p class="hint" id="temaHint">Es el único dato obligatorio. Describe lugar, acciones y momento.</p>
+      </div>
+      <div class="fld">
+        <label class="lab" for="elementos">Elementos imprescindibles <span class="opt">(opcional)</span></label>
+        <input type="text" id="elementos" name="elementos" placeholder="Ej.: nevera, mesa, silla, plato, vaso">
+      </div>
+      <fieldset class="fld">
+        <legend>Personas en la escena</legend>
+        <div class="chips" id="g-personas"></div>
+        <label class="check"><input type="checkbox" id="diversidad" name="diversidad"><span>Mostrar variedad de edades, rasgos y capacidades</span></label>
+      </fieldset>
+      <div class="fld">
+        <label class="lab" for="ambiente">Ambiente cultural</label>
+        <select id="ambiente" name="ambiente"></select>
+      </div>
+    </section>
+
+    <section class="sec" data-c="2" id="sec-hist" hidden>
+      <h2>Personaje histórico</h2>
+      <div class="fld">
+        <label class="lab" for="hNombre">Figura o autor/a <span class="opt">(opcional)</span></label>
+        <input type="text" id="hNombre" name="hNombre" placeholder="Ej.: nombre de la figura">
+        <p class="hint">Algunas herramientas rechazan nombres de personas reales. Si pasa, deja el campo vacío y describe época y rasgos.</p>
+      </div>
+      <div class="fld">
+        <label class="lab" for="hEpoca">Época y lugar</label>
+        <input type="text" id="hEpoca" name="hEpoca" placeholder="Ej.: España, finales del siglo XVI">
+      </div>
+      <div class="fld">
+        <label class="lab" for="hEdad">Edad aproximada <span class="opt">(opcional)</span></label>
+        <input type="text" id="hEdad" name="hEdad" placeholder="Ej.: unos 50 años">
+      </div>
+      <div class="fld">
+        <label class="lab" for="hRasgos">Rasgos documentados <span class="opt">(opcional)</span></label>
+        <input type="text" id="hRasgos" name="hRasgos" placeholder="Ej.: rasgos que aparezcan en fuentes fiables">
+        <p class="hint">Escribe solo lo que esté documentado. Si no hay un retrato auténtico, es mejor no inventar rasgos.</p>
+      </div>
+      <div class="fld">
+        <label class="lab" for="hIndum">Indumentaria y objetos de época <span class="opt">(opcional)</span></label>
+        <input type="text" id="hIndum" name="hIndum" placeholder="Ej.: jubón, gorguera, tintero, pluma de ave">
+      </div>
+      <fieldset class="fld">
+        <legend>Enfoque</legend>
+        <div class="chips" id="g-hEnfoque"></div>
+      </fieldset>
+      <label class="check"><input type="checkbox" id="hArtistico" name="hArtistico"><span>Forzar un aspecto claramente artístico, no fotorrealista</span></label>
+      <p class="hint">En este tipo de recurso, «Qué evitar» se limita a personajes de ficción conocidos: las personas reales sí se permiten.</p>
+    </section>
+
+    <section class="sec" data-c="3" id="sec-mov" hidden>
+      <h2>Movimiento y sonido</h2>
+      <label class="check"><input type="checkbox" id="conImagen" name="conImagen"><span>Parto de una imagen que adjuntaré en la herramienta</span></label>
+      <p class="hint" id="conImagenHint">Con imagen de partida, la escena, el estilo, el color y el formato se toman de la imagen. Describe solo cómo se mueve todo.</p>
+      <div class="fld">
+        <label class="lab" for="inicio">Al comenzar <span class="opt">(opcional)</span></label>
+        <input type="text" id="inicio" name="inicio" placeholder="Ej.: la persona entra en el pasillo de la fruta">
+      </div>
+      <div class="fld">
+        <label class="lab" for="final">Al terminar <span class="opt">(opcional)</span></label>
+        <input type="text" id="final" name="final" placeholder="Ej.: el carrito queda lleno en primer plano">
+      </div>
+      <fieldset class="fld">
+        <legend>Movimiento de cámara</legend>
+        <div class="chips" id="g-camara"></div>
+      </fieldset>
+      <fieldset class="fld">
+        <legend>Ritmo</legend>
+        <div class="chips" id="g-ritmo"></div>
+      </fieldset>
+      <fieldset class="fld">
+        <legend>Duración</legend>
+        <div class="chips" id="g-duracion"></div>
+        <p class="hint">Según la ayuda de Google, Flow ofrece 4, 6 u 8 s con Veo 3.1 y hasta 10 s con Gemini Omni. Vids genera clips de 3 a 10 s.</p>
+      </fieldset>
+      <label class="check"><input type="checkbox" id="continuo" name="continuo"><span>Un solo plano continuo, sin cortes</span></label>
+      <fieldset class="fld">
+        <legend>Audio</legend>
+        <div class="chips" id="g-audio"></div>
+      </fieldset>
+      <div class="fld">
+        <label class="lab" for="dialogo">Diálogo en español</label>
+        <input type="text" id="dialogo" name="dialogo" placeholder="Ej.: Hola, ¿qué tal el fin de semana? Muy bien, fui a la playa.">
+        <p class="hint">Mejor una frase o dos, que quepan en la duración del clip.</p>
+      </div>
+      <div class="fld">
+        <label class="lab" for="acento">Acento y tono <span class="opt">(opcional)</span></label>
+        <input type="text" id="acento" name="acento" placeholder="Ej.: acento castellano, tono amable y pausado">
+      </div>
+    </section>
+
+    <section class="sec" data-c="4">
+      <h2>Composición y formato</h2>
+      <fieldset class="fld">
+        <legend>Nivel de detalle</legend>
+        <div class="chips" id="g-detalle"></div>
+        <p class="hint" id="detalleHint"></p>
+      </fieldset>
+      <fieldset class="fld">
+        <legend id="legEncuadre">Encuadre</legend>
+        <div class="chips" id="g-encuadre"></div>
+      </fieldset>
+      <fieldset class="fld">
+        <legend>Fondo</legend>
+        <div class="chips" id="g-fondo"></div>
+      </fieldset>
+      <fieldset class="fld">
+        <legend>Proporción</legend>
+        <div class="chips" id="g-prop"></div>
+      </fieldset>
+      <fieldset class="fld" id="f-destino">
+        <legend>Destino</legend>
+        <div class="chips" id="g-destino"></div>
+      </fieldset>
+    </section>
+
+    <section class="sec" data-c="5">
+      <h2>Estilo y color</h2>
+      <fieldset class="fld">
+        <legend>Estilo</legend>
+        <div class="chips" id="g-estilo"></div>
+      </fieldset>
+      <fieldset class="fld">
+        <legend>Paleta</legend>
+        <div class="chips" id="g-paleta"></div>
+      </fieldset>
+      <div class="fld">
+        <label class="lab" for="colores">Colores concretos <span class="opt">(opcional)</span></label>
+        <input type="text" id="colores" name="colores" placeholder="Ej.: azul cobalto y amarillo azafrán">
+      </div>
+      <fieldset class="fld">
+        <legend>Luz</legend>
+        <div class="chips" id="g-luz"></div>
+      </fieldset>
+      <label class="check"><input type="checkbox" id="acc" name="acc"><span>Distinguir los elementos por forma y contraste, no solo por el color (accesible para daltonismo)</span></label>
+    </section>
+
+    <section class="sec" data-c="6">
+      <h2>Texto y límites</h2>
+      <fieldset class="fld">
+        <legend id="legTexto">Texto dentro de la imagen</legend>
+        <div class="chips" id="g-textoModo"></div>
+        <input type="text" id="texto" name="texto" aria-label="Texto exacto que debe aparecer" placeholder="Texto exacto que debe aparecer">
+        <p class="hint">Muchos generadores de imagen cometen errores con tildes, eñes y signos de apertura. Si puedes, añade el texto después en tu editor.</p>
+      </fieldset>
+      <fieldset class="fld">
+        <legend>Qué evitar</legend>
+        <div class="checks" id="g-avoid"></div>
+      </fieldset>
+      <div class="fld">
+        <label class="lab" for="otros">Otras cosas que evitar <span class="opt">(opcional)</span></label>
+        <input type="text" id="otros" name="otros" placeholder="Ej.: vehículos, pantallas, animales">
+      </div>
+    </section>
+
+    <section class="sec" data-c="1">
+      <h2>Tu generador</h2>
+      <div class="fld" id="f-herr">
+        <label class="lab" for="herramienta">Herramienta</label>
+        <select id="herramienta" name="herramienta">
+          <optgroup label="Lenguaje natural">
+            <option value="gemini">Gemini</option>
+            <option value="chatgpt">ChatGPT</option>
+            <option value="copilot">Microsoft Copilot</option>
+            <option value="canva">Canva</option>
+            <option value="firefly">Adobe Firefly</option>
+            <option value="ideogram">Ideogram</option>
+            <option value="leonardo">Leonardo.ai</option>
+            <option value="otra">Otra herramienta</option>
+          </optgroup>
+          <optgroup label="Con parámetros o campo aparte">
+            <option value="sd">Stable Diffusion (con prompt negativo aparte)</option>
+            <option value="mj">Midjourney (con --ar y --no)</option>
+          </optgroup>
+        </select>
+        <p class="hint" id="herrHint"></p>
+      </div>
+      <div class="fld" id="f-herrV" hidden>
+        <label class="lab" for="herramientaV">Herramienta de vídeo</label>
+        <select id="herramientaV" name="herramientaV">
+          <option value="flow">Google Flow</option>
+          <option value="vids">Google Vids</option>
+          <option value="gemvid">Gemini (Crear vídeo)</option>
+          <option value="otravid">Otra herramienta</option>
+        </select>
+        <p class="hint" id="herrHintV"></p>
+      </div>
+      <fieldset class="fld">
+        <legend>Idioma del prompt</legend>
+        <div class="chips" id="g-idioma"></div>
+        <p class="hint">Los textos que escribes tú (escena, elementos, colores, texto exacto) se incluyen tal cual, sin traducir.</p>
+      </fieldset>
+      <fieldset class="fld">
+        <legend>Presentación</legend>
+        <div class="chips" id="g-estructura"></div>
+        <p class="hint" id="estructuraHint"></p>
+      </fieldset>
+    </section>
+  </form>
+
+  <aside class="panel" id="panel" aria-labelledby="panelTitle">
+    <h2 id="panelTitle">Tu prompt</h2>
+    <p class="meta" id="meta"></p>
+    <div class="out" id="out" tabindex="0" aria-live="polite"></div>
+    <button type="button" class="primary" id="copy">Copiar prompt</button>
+    <p class="status" id="status" role="status"></p>
+    <ul class="checks-list" id="warns"></ul>
+    <details>
+      <summary>Antes de usar la imagen en clase</summary>
+      <ul>
+        <li>Revisa tildes, eñes, signos de apertura y cualquier texto dentro de la imagen.</li>
+        <li>Mira manos, rostros y objetos: pueden aparecer errores pequeños.</li>
+        <li>Comprueba que no haya estereotipos ni detalles que contradigan lo que enseñas sobre cultura y costumbres.</li>
+        <li>Consulta las condiciones de uso de tu herramienta antes de compartir o publicar la imagen, e indica que está generada con IA.</li>
+      </ul>
+    </details>
+  </aside>
+</main>
+
+<footer class="wrap src">
+  <p>Datos de las herramientas de vídeo revisados el 30 de octubre de 2026 en la ayuda de Google: <a href="https://support.google.com/flow/answer/16352836" target="_blank" rel="noopener">Flow</a>, <a href="https://support.google.com/docs/answer/16143507" target="_blank" rel="noopener">Vids</a> y <a href="https://support.google.com/gemini/answer/16126339" target="_blank" rel="noopener">Gemini</a>. Pueden cambiar.</p>
+</footer>
+
+<div class="dock">
+  <button type="button" class="btn" id="goPanel">Ver prompt</button>
+  <button type="button" class="primary" id="copy2">Copiar prompt</button>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ---------- Datos ---------- */
+  var D = {
+    nivel: ["A1", "A2", "B1", "B2", "C1", "C2"].map(function (n) { return { id: n, label: n }; }),
+    detalleNivel: { A1: "min", A2: "min", B1: "med", B2: "med", C1: "rich", C2: "rich" },
+    kind: [
+      { id: "vocab", label: "Vocabulario",
+        es: "imagen de vocabulario con los elementos del tema bien separados, reconocibles a primera vista y sin solaparse",
+        en: "vocabulary image with the elements of the topic clearly separated, recognisable at a glance and not overlapping" },
+      { id: "describir", label: "Describir y conversar",
+        es: "escena para describir y conversar, con varias acciones simultáneas y detalles que permitan hacer hipótesis y comparaciones",
+        en: "scene to describe and talk about, with several simultaneous actions and details that invite guesses and comparisons" },
+      { id: "diferencias", label: "Buscar las diferencias",
+        es: "juego de buscar las diferencias: dos versiones de la misma escena, colocadas una junto a otra con el mismo encuadre, idénticas salvo por unas diferencias pequeñas pero visibles (objetos que cambian de color o de posición, que aparecen o desaparecen)",
+        en: "spot-the-difference game: two versions of the same scene placed side by side with the same framing, identical except for a few small but visible differences (objects that change colour or position, or appear or disappear)" },
+      { id: "narrar", label: "Narrar",
+        es: "imagen narrativa para producción oral o escrita, con un momento clave visible y una historia que queda abierta",
+        en: "narrative image for speaking or writing tasks, showing one key moment and leaving the story open" },
+      { id: "desordenado", label: "Cómic para ordenar",
+        es: "cómic para una actividad de ordenar viñetas: una historia breve contada en viñetas independientes con una secuencia lógica clara, para que el alumnado reconstruya el orden",
+        en: "comic for a sequencing activity: a short story told in separate panels with a clear logical sequence, so that learners can rebuild the order" },
+      { id: "bocadillos", label: "Cómic con bocadillos vacíos",
+        es: "cómic con bocadillos de diálogo vacíos, para que el alumnado escriba los diálogos; la historia se entiende solo con las imágenes y las expresiones de los personajes",
+        en: "comic with empty speech bubbles, for learners to write the dialogues; the story can be understood from the images and the characters' expressions alone" },
+      { id: "situacion", label: "Situación comunicativa",
+        es: "escena de situación comunicativa para un juego de rol, en un lugar cotidiano donde se vea quién participa y qué necesita cada persona",
+        en: "scene of a communicative situation for a role play, set in an everyday place where it is clear who takes part and what each person needs" },
+      { id: "cultura", label: "Cultura",
+        es: "imagen cultural contextualizada, fiel al lugar y a la época, sin caricaturas",
+        en: "culturally grounded image, faithful to the place and period, without caricature" },
+      { id: "gramatica", label: "Gramática",
+        es: "ilustración para ejemplificar un contenido gramatical, con acciones y relaciones (ubicación, comparación, tiempo) fáciles de verbalizar",
+        en: "illustration to exemplify a grammar point, with actions and relationships (location, comparison, time) that are easy to put into words" },
+      { id: "historico", label: "Personaje histórico",
+        es: "ilustración de un personaje histórico o literario real, con rigor en la época, la indumentaria y el entorno",
+        en: "illustration of a real historical or literary figure, with care for period, clothing and setting" },
+      { id: "portada", label: "Portada de unidad",
+        es: "portada o cabecera de una unidad didáctica, con una composición evocadora y espacio libre para añadir el título después",
+        en: "cover or header for a teaching unit, with an evocative composition and free space to add the title later" }
+    ],
+    nDif: [3, 5, 7, 10].map(function (n) { return { id: String(n), label: String(n) }; }),
+    nVin: [3, 4, 5, 6].map(function (n) { return { id: String(n), label: String(n) }; }),
+    hEnfoque: [
+      { id: "retrato", label: "Retrato evocador", es: "retrato evocador de la figura, interpretado de forma artística y sin pretender fidelidad fotográfica", en: "evocative portrait of the figure, artistically interpreted and not aiming at photographic likeness" },
+      { id: "escena", label: "Escena de época", es: "escena de época que sitúa a la figura en su contexto, con su entorno y sus actividades", en: "period scene placing the figure in context, with their surroundings and activities" }
+    ],
+    modo: [{ id: "imagen", label: "Imagen" }, { id: "video", label: "Vídeo" }],
+    kindV: [
+      { id: "v_vocab", label: "Vocabulario en acción",
+        es: "clip de vocabulario en acción, con cada elemento del tema apareciendo de forma clara y por separado",
+        en: "vocabulary-in-action clip, with each element of the topic appearing clearly and separately" },
+      { id: "v_escuchar", label: "Comprensión auditiva",
+        es: "escena breve con una conversación cotidiana, con hablantes bien visibles y un contexto que ayude a entender la situación",
+        en: "short scene with an everyday conversation, speakers clearly visible and a context that helps understand the situation" },
+      { id: "v_describir", label: "Describir y conversar",
+        es: "escena para describir y conversar, con varias acciones simultáneas y detalles que permitan hacer hipótesis",
+        en: "scene to describe and talk about, with several simultaneous actions and details that invite guesses" },
+      { id: "v_cultura", label: "Cultura",
+        es: "clip cultural contextualizado, fiel al lugar y a la época, sin caricaturas",
+        en: "culturally grounded clip, faithful to the place and period, without caricature" },
+      { id: "v_situacion", label: "Modelo de situación comunicativa",
+        es: "modelo de una situación comunicativa en un lugar cotidiano, donde se vea quién participa y qué necesita cada persona",
+        en: "model of a communicative situation in an everyday place, where it is clear who takes part and what each person needs" },
+      { id: "v_narrar", label: "Inicio de una historia",
+        es: "inicio de una historia corta que queda abierta, para continuarla de forma oral o escrita",
+        en: "the opening of a short story left open, to be continued orally or in writing" },
+      { id: "v_historico", label: "Personaje histórico",
+        es: "clip sobre un personaje histórico o literario real, con rigor en la época, la indumentaria y el entorno",
+        en: "clip about a real historical or literary figure, with care for period, clothing and setting" },
+      { id: "v_apertura", label: "Apertura de unidad",
+        es: "clip de apertura de una unidad didáctica, evocador y sin necesidad de diálogo",
+        en: "opening clip for a teaching unit, evocative and without needing dialogue" }
+    ],
+    camara: [
+      { id: "none", label: "Sin preferencia", es: "", en: "" },
+      { id: "fija", label: "Cámara fija", es: "cámara fija", en: "static camera" },
+      { id: "lateral", label: "Travelling lateral", es: "travelling lateral lento", en: "slow tracking shot to the side" },
+      { id: "acercar", label: "Acercamiento lento", es: "acercamiento lento hacia el sujeto", en: "slow push-in toward the subject" },
+      { id: "alejar", label: "Alejamiento lento", es: "alejamiento lento", en: "slow pull-back" },
+      { id: "pan", label: "Panorámica", es: "panorámica horizontal suave", en: "smooth horizontal pan" },
+      { id: "mano", label: "Cámara en mano", es: "cámara en mano con un ligero movimiento natural", en: "handheld camera with slight natural movement" },
+      { id: "aerea", label: "Vista aérea", es: "vista aérea con movimiento suave", en: "aerial view with smooth movement" },
+      { id: "orbita", label: "Órbita", es: "órbita lenta alrededor del sujeto", en: "slow orbit around the subject" }
+    ],
+    ritmo: [
+      { id: "none", label: "Sin preferencia", es: "", en: "" },
+      { id: "lento", label: "Lento y tranquilo", es: "ritmo lento y tranquilo", en: "slow, calm pace" },
+      { id: "natural", label: "Natural", es: "ritmo natural", en: "natural pace" },
+      { id: "dinamico", label: "Dinámico", es: "ritmo dinámico", en: "dynamic pace" }
+    ],
+    duracion: [
+      { id: "none", label: "Sin preferencia", es: "", en: "" },
+      { id: "d4", label: "4 s", es: "duración aproximada de 4 segundos", en: "approximately 4 seconds long" },
+      { id: "d6", label: "6 s", es: "duración aproximada de 6 segundos", en: "approximately 6 seconds long" },
+      { id: "d8", label: "8 s", es: "duración aproximada de 8 segundos", en: "approximately 8 seconds long" },
+      { id: "d10", label: "10 s", es: "duración aproximada de 10 segundos", en: "approximately 10 seconds long" }
+    ],
+    audio: [
+      { id: "silencio", label: "Sin voz ni música", es: "sin voz ni música", en: "no voices or music" },
+      { id: "amb", label: "Sonido ambiente", es: "con sonido ambiente natural y sin música", en: "with natural ambient sound and no music" },
+      { id: "fx", label: "Ambiente y efectos", es: "con sonido ambiente y efectos de sonido naturales", en: "with ambient sound and natural sound effects" },
+      { id: "dial", label: "Con diálogo", es: "", en: "" }
+    ],
+    personas: [
+      { id: "none", label: "Ninguna", es: "ninguna", en: "none" },
+      { id: "one", label: "Una", es: "una sola persona", en: "a single person" },
+      { id: "two", label: "Dos", es: "dos personas", en: "two people" },
+      { id: "small", label: "Grupo pequeño", es: "un grupo pequeño (de tres a cinco personas)", en: "a small group (three to five people)" },
+      { id: "crowd", label: "Multitud", es: "mucha gente", en: "a crowd" }
+    ],
+    diversidad: { es: "con variedad de edades, rasgos y capacidades", en: "showing a variety of ages, appearances and abilities" },
+    ambiente: [
+      { id: "none", label: "Sin especificar", es: "", en: "" },
+      { id: "esp", label: "España", es: "ambientado en España", en: "set in Spain" },
+      { id: "mex", label: "México", es: "ambientado en México", en: "set in Mexico" },
+      { id: "arg", label: "Argentina", es: "ambientado en Argentina", en: "set in Argentina" },
+      { id: "col", label: "Colombia", es: "ambientado en Colombia", en: "set in Colombia" },
+      { id: "per", label: "Perú", es: "ambientado en Perú", en: "set in Peru" },
+      { id: "chi", label: "Chile", es: "ambientado en Chile", en: "set in Chile" },
+      { id: "car", label: "Caribe hispano", es: "ambientado en el Caribe hispano", en: "set in the Spanish-speaking Caribbean" },
+      { id: "cen", label: "Centroamérica", es: "ambientado en Centroamérica", en: "set in Central America" },
+      { id: "gnq", label: "Guinea Ecuatorial", es: "ambientado en Guinea Ecuatorial", en: "set in Equatorial Guinea" },
+      { id: "usa", label: "Comunidad hispana en EE. UU.", es: "ambientado en una comunidad hispana de Estados Unidos", en: "set in a Hispanic community in the United States" },
+      { id: "mix", label: "Varios países", es: "con referencias a varios países hispanohablantes", en: "with references to several Spanish-speaking countries" }
+    ],
+    detalle: [
+      { id: "min", label: "Mínimo", es: "composición sencilla, con pocos elementos y mucho espacio libre", en: "simple composition, few elements and plenty of empty space" },
+      { id: "med", label: "Medio", es: "composición equilibrada, con varios planos y detalles identificables", en: "balanced composition with several planes and identifiable details" },
+      { id: "rich", label: "Rico", es: "composición detallada, con elementos secundarios y matices abiertos a la interpretación", en: "detailed composition with secondary elements and nuances open to interpretation" }
+    ],
+    encuadre: [
+      { id: "none", label: "Sin preferencia", es: "", en: "" },
+      { id: "wide", label: "Plano general", es: "plano general", en: "wide shot" },
+      { id: "mid", label: "Plano medio", es: "plano medio", en: "medium shot" },
+      { id: "close", label: "Primer plano", es: "primer plano", en: "close-up" },
+      { id: "top", label: "Vista cenital", es: "vista cenital (desde arriba)", en: "top-down view" },
+      { id: "iso", label: "Vista isométrica", es: "vista isométrica", en: "isometric view" },
+      { id: "eye", label: "A la altura de los ojos", es: "a la altura de los ojos", en: "eye-level view" }
+    ],
+    fondo: [
+      { id: "none", label: "Sin preferencia", es: "", en: "" },
+      { id: "plain", label: "Liso y claro", es: "fondo liso y claro", en: "plain, light background" },
+      { id: "ctx", label: "Con contexto", es: "fondo con contexto reconocible del lugar", en: "background showing recognisable context of the place" },
+      { id: "blur", label: "Desenfocado", es: "fondo suavemente desenfocado", en: "softly blurred background" }
+    ],
+    prop: [
+      { id: "p11", label: "1:1 Cuadrado", ar: "1:1", es: "formato cuadrado 1:1", en: "square format 1:1" },
+      { id: "p43", label: "4:3 Horizontal", ar: "4:3", es: "formato horizontal 4:3", en: "landscape format 4:3" },
+      { id: "p169", label: "16:9 Pantalla", ar: "16:9", es: "formato panorámico 16:9", en: "widescreen format 16:9" },
+      { id: "p34", label: "3:4 Vertical", ar: "3:4", es: "formato vertical 3:4", en: "portrait format 3:4" },
+      { id: "p916", label: "9:16 Móvil", ar: "9:16", es: "formato vertical 9:16", en: "tall portrait format 9:16" },
+      { id: "p57", label: "A4 vertical (aprox.)", ar: "5:7", es: "formato vertical con proporción aproximada de un A4 (5:7)", en: "portrait format with roughly A4 proportions (5:7)" }
+    ],
+    destino: [
+      { id: "screen", label: "Pantalla", es: "pensada para proyectar en pantalla", en: "designed to be shown on screen" },
+      { id: "color", label: "Impresión en color", es: "pensada para imprimir en color", en: "designed for colour printing" },
+      { id: "bn", label: "Fotocopia en blanco y negro", es: "pensada para fotocopiar en blanco y negro, con líneas claras y definidas, contraste alto y sin depender del color", en: "designed for black and white photocopying, with clean, well-defined lines, high contrast and no reliance on colour" }
+    ],
+    estilo: [
+      { id: "none", label: "Sin preferencia", es: "", en: "" },
+      { id: "flat", label: "Ilustración plana", es: "ilustración vectorial plana, con formas simples y colores planos", en: "flat vector illustration with simple shapes and flat colours" },
+      { id: "acuarela", label: "Acuarela", es: "acuarela con bordes suaves y textura de papel", en: "watercolour with soft edges and paper texture" },
+      { id: "foto", label: "Fotografía realista", es: "fotografía realista, natural y sin retoque excesivo", en: "realistic photograph, natural and not over-processed" },
+      { id: "comic", label: "Cómic", es: "viñeta de cómic con trazo definido y color plano", en: "comic panel with defined linework and flat colour" },
+      { id: "lapiz", label: "Dibujo a lápiz", es: "dibujo a lápiz con sombreado suave", en: "pencil drawing with soft shading" },
+      { id: "linea", label: "Línea limpia", es: "dibujo de línea limpia en blanco y negro, apto para colorear", en: "clean black and white line art, suitable for colouring in" },
+      { id: "collage", label: "Collage de papel", es: "collage de papel recortado con capas y texturas", en: "cut paper collage with layers and textures" },
+      { id: "papercraft", label: "Papercraft", es: "papercraft con capas de papel recortado, volumen, sombras suaves entre capas y bordes de papel visibles", en: "papercraft with layered cut paper, depth, soft shadows between layers and visible paper edges" },
+      { id: "stopmotion", label: "Stop motion de plastilina", es: "estética de stop motion con figuras de plastilina", en: "stop motion look with clay figures" },
+      { id: "infantil", label: "Ilustración infantil", es: "ilustración de libro infantil, amable y expresiva", en: "children's book illustration, friendly and expressive" },
+      { id: "3d", label: "Render 3D suave", es: "render 3D de formas redondeadas y acabado mate", en: "3D render with rounded shapes and a matte finish" },
+      { id: "pixel", label: "Pixel art", es: "pixel art de estilo retro", en: "retro pixel art" },
+      { id: "grabado", label: "Grabado", es: "grabado en linóleo con tintas planas y trazo marcado", en: "linocut print with flat inks and bold lines" },
+      { id: "oleo", label: "Óleo", es: "pintura al óleo con pincelada visible", en: "oil painting with visible brushwork" }
+    ],
+    paleta: [
+      { id: "none", label: "Sin preferencia", es: "", en: "", sw: [] },
+      { id: "calida", label: "Cálida", es: "paleta cálida de ocres, naranjas y rojos", en: "warm palette of ochres, oranges and reds", sw: ["#C8553D", "#F28F3B", "#F6C85F", "#8C2F39"] },
+      { id: "rojizos", label: "Rojizos y vivos", es: "colores rojizos y vivos: rojos intensos, carmín, coral y naranja", en: "vivid reddish colours: intense reds, crimson, coral and orange", sw: ["#D7263D", "#F46036", "#FF6B6B", "#9E1B32"] },
+      { id: "fria", label: "Fría", es: "paleta fría de azules y verdes", en: "cool palette of blues and greens", sw: ["#1F4E79", "#2A9D8F", "#8ECAE6", "#264653"] },
+      { id: "pastel", label: "Pastel", es: "colores pastel suaves", en: "soft pastel colours", sw: ["#F7C6D0", "#C8E6C9", "#FFF1B6", "#C9D6F5"] },
+      { id: "vibrante", label: "Vibrante", es: "colores vibrantes y saturados", en: "vivid, saturated colours", sw: ["#E63946", "#FFB703", "#2A6FDB", "#06A77D"] },
+      { id: "contraste", label: "Alto contraste", es: "alto contraste entre figura y fondo", en: "high contrast between subject and background", sw: ["#111111", "#FFFFFF", "#FFD400", "#0057B8"] },
+      { id: "mono", label: "Monocroma", es: "paleta monocroma en tonos de un solo color", en: "monochrome palette in shades of a single colour", sw: ["#0B2545", "#13315C", "#8DA9C4", "#EEF4ED"] },
+      { id: "tierra", label: "Tierra", es: "colores tierra y tonos naturales", en: "earthy colours and natural tones", sw: ["#6B4F3A", "#A98467", "#6A994E", "#DDB892"] }
+    ],
+    luz: [
+      { id: "none", label: "Sin preferencia", es: "", en: "" },
+      { id: "dia", label: "Luz natural de día", es: "luz natural de día", en: "natural daylight" },
+      { id: "dorada", label: "Hora dorada", es: "luz cálida de atardecer", en: "warm golden-hour light" },
+      { id: "interior", label: "Interior luminoso", es: "interior luminoso con luz suave", en: "bright interior with soft light" },
+      { id: "noche", label: "Noche", es: "escena nocturna con luces artificiales", en: "night scene with artificial lights" },
+      { id: "suave", label: "Luz suave y pareja", es: "luz suave y uniforme, sin sombras duras", en: "soft, even light without harsh shadows" }
+    ],
+    acc: { es: "los elementos se distinguen por la forma y el contraste, no solo por el color", en: "elements distinguishable by shape and contrast, not by colour alone" },
+    textoModo: [
+      { id: "none", label: "Sin texto (recomendado)" },
+      { id: "exact", label: "Texto exacto" }
+    ],
+    avoid: [
+      { id: "marcas", label: "Marcas y logotipos", es: "marcas y logotipos reconocibles", en: "recognisable brands and logos" },
+      { id: "derechos", label: "Personajes de ficción conocidos y personas reales", es: "personajes de ficción conocidos y personas reales identificables", en: "well-known fictional characters and identifiable real people" },
+      { id: "estereotipos", label: "Estereotipos y caricaturas culturales", es: "estereotipos y caricaturas culturales", en: "cultural stereotypes and caricatures" },
+      { id: "anatomia", label: "Manos, rostros o proporciones deformes", es: "manos, rostros o proporciones deformes", en: "distorted hands, faces or proportions" },
+      { id: "aula", label: "Contenido inquietante, violento o sexual", es: "contenido inquietante, violento o sexual", en: "disturbing, violent or sexual content" },
+      { id: "distractores", label: "Objetos que distraigan del tema", es: "objetos o detalles que distraigan del tema", en: "objects or details that distract from the topic" },
+      { id: "cortes", label: "Cortes bruscos y movimientos erráticos de cámara", es: "cortes bruscos, parpadeos y movimientos erráticos de cámara", en: "abrupt cuts, flicker and erratic camera movement", vid: true }
+    ],
+    idioma: [
+      { id: "es", label: "Español" },
+      { id: "en", label: "English" }
+    ],
+    estructura: [
+      { id: "estructurado", label: "Por apartados" },
+      { id: "continuo", label: "Texto continuo" }
+    ]
+  };
+
+  var T = {
+    es: { kind: "Recurso", opts: "Ajustes del recurso", scene: "Escena", comp: "Encuadre", style: "Estilo", color: "Color y luz", format: "Proporción y destino", text: "Texto en la imagen", avoid: "Evitar", motion: "Movimiento", audio: "Audio", base: "Base", action: "Acción" },
+    en: { kind: "Resource", opts: "Resource settings", scene: "Scene", comp: "Framing", style: "Style", color: "Colour and light", format: "Ratio and use", text: "Text in the image", avoid: "Avoid", motion: "Motion", audio: "Audio", base: "Base", action: "Action" }
+  };
+
+  var MODE = { gemini: "nl", chatgpt: "nl", copilot: "nl", canva: "nl", firefly: "nl", ideogram: "nl", leonardo: "nl", otra: "nl", sd: "neg", mj: "mj" };
+  var HERR_HINT = {
+    nl: "Descripción en lenguaje natural, que es lo que suelen esperar estas herramientas.",
+    neg: "Obtendrás el prompt y el prompt negativo por separado. Pega cada uno en su campo. Si tu herramienta no tiene campo para excluir, elige una de lenguaje natural.",
+    mj: "Un solo párrafo con los parámetros --ar y --no al final."
+  };
+
+  var HERR_HINT_V = {
+    flow: "Flow ofrece clips de 4, 6 u 8 s con Veo 3.1 y de hasta 10 s con Gemini Omni. Admite texto a vídeo, fotograma inicial y final, e ingredientes según el modelo. Datos de la ayuda de Google, que pueden cambiar.",
+    vids: "Vids genera clips de 3 a 10 s, en 16:9 o 9:16, con sonido y diálogo. Requiere una licencia de Workspace elegible y, según la ayuda, la mayoría de usuarios puede generar hasta 50 vídeos al mes. Con imagen de partida, describe cómo se mueve todo sin repetir la escena.",
+    gemvid: "En la app de Gemini se elige «Crear vídeo». La ayuda de Google indica que no está disponible para menores de 18 años, así que el alumnado menor no puede usarlo con su propia cuenta. La ayuda no indica la duración del clip.",
+    otravid: "Prompt en lenguaje natural. Comprueba en tu herramienta la duración y los formatos disponibles."
+  };
+  var ART = { es: "aspecto claramente artístico y pictórico, no fotorrealista", en: "clearly artistic, painterly look, not photorealistic" };
+  var TEMA_PH = {
+    imagen: "Ej.: Un mercado de barrio un sábado por la mañana, con puestos de fruta y un vendedor que ofrece una muestra",
+    video: "Ej.: Dos amigos se encuentran en una cafetería y piden algo de beber"
+  };
+
+  var RADIOS = ["modo", "nivel", "kind", "kindV", "nDif", "nVin", "personas", "detalle", "encuadre", "fondo", "prop", "destino", "estilo", "paleta", "luz", "textoModo", "camara", "ritmo", "duracion", "audio", "idioma", "estructura", "hEnfoque"];
+  var TEXTS = ["tema", "elementos", "colores", "texto", "otros", "inicio", "final", "dialogo", "acento", "ambiente", "herramienta", "herramientaV", "hNombre", "hEpoca", "hEdad", "hRasgos", "hIndum"];
+
+  /* ---------- Estado ---------- */
+  function blank() {
+    return {
+      modo: "imagen", nivel: "B1", kind: "describir", kindV: "v_describir", nDif: "7", nVin: "4", tema: "", elementos: "",
+      hEnfoque: "retrato", hNombre: "", hEpoca: "", hEdad: "", hRasgos: "", hIndum: "", hArtistico: true,
+      camara: "none", ritmo: "none", duracion: "d8", continuo: true, inicio: "", final: "", conImagen: false, audio: "amb", dialogo: "", acento: "",
+      personas: "small", diversidad: true, ambiente: "none",
+      detalle: "med", detalleTouched: false,
+      encuadre: "none", fondo: "none", prop: "p43", destino: "screen",
+      estilo: "none", paleta: "none", colores: "", luz: "none", acc: false,
+      textoModo: "none", texto: "",
+      avoid: { marcas: true, derechos: true, estereotipos: true, anatomia: true, aula: true, distractores: false, cortes: true },
+      otros: "",
+      herramienta: "gemini", herramientaV: "flow", idioma: "es", estructura: "estructurado"
+    };
+  }
+
+  var PRESETS_IMG = [
+    { nivel: "A1", kind: "vocab", tema: "Una cocina familiar con los objetos básicos del día a día",
+      elementos: "nevera, mesa, silla, plato, vaso, cuchillo, sartén",
+      personas: "none", diversidad: false, encuadre: "wide", fondo: "plain",
+      estilo: "flat", paleta: "vibrante", prop: "p43", destino: "screen",
+      avoid: { marcas: true, derechos: true, estereotipos: true, anatomia: true, aula: true, distractores: true } },
+    { nivel: "B1", kind: "describir",
+      tema: "Un mercado de barrio un sábado por la mañana, con puestos de fruta, un vendedor que ofrece una muestra, una señora que compara precios y un niño que señala un helado",
+      personas: "small", diversidad: true, ambiente: "esp", encuadre: "wide", fondo: "ctx",
+      estilo: "acuarela", paleta: "calida", luz: "dia", prop: "p169", destino: "screen" },
+    { nivel: "C1", kind: "portada",
+      tema: "Una calle de ciudad al atardecer donde un edificio antiguo se superpone con su versión moderna, para hablar del paso del tiempo y de la memoria",
+      personas: "none", diversidad: false, ambiente: "mix", fondo: "ctx",
+      estilo: "collage", paleta: "tierra", luz: "dorada", prop: "p57", destino: "color" },
+    { nivel: "B2", kind: "historico",
+      tema: "Un escritor trabaja de noche en su escritorio, con papeles y una pluma, a la luz de una vela",
+      personas: "one", diversidad: false, hEnfoque: "escena", hEpoca: "España, siglo XVII", hEdad: "unos 50 años",
+      hIndum: "ropa de época, tintero, pluma de ave, papeles manuscritos",
+      fondo: "ctx", estilo: "oleo", paleta: "tierra", luz: "noche", prop: "p43", destino: "screen" }
+  ];
+  var PRESETS_VID = [
+    { nivel: "A2", kindV: "v_vocab",
+      tema: "Una persona hace la compra en un supermercado y va metiendo en el carrito fruta, pan, leche y huevos",
+      personas: "one", diversidad: false, camara: "lateral", ritmo: "natural", duracion: "d8",
+      inicio: "la persona entra en el pasillo de la fruta", final: "el carrito queda lleno en primer plano",
+      audio: "amb", estilo: "flat", paleta: "vibrante", prop: "p169" },
+    { nivel: "B1", kindV: "v_escuchar",
+      tema: "Dos amigos se encuentran en una cafetería, piden algo de beber y se ponen al día sobre su fin de semana",
+      personas: "two", ambiente: "esp", camara: "fija", ritmo: "natural", duracion: "d8",
+      encuadre: "mid", fondo: "ctx", audio: "dial",
+      dialogo: "Hola, ¿qué tal el fin de semana? Muy bien, fui a la playa con mi familia.",
+      acento: "acento castellano, tono amable y relajado",
+      estilo: "foto", luz: "interior", prop: "p169" },
+    { nivel: "B2", kindV: "v_apertura",
+      tema: "Amanece en una ciudad costera y las calles se llenan poco a poco de gente y de luz",
+      personas: "crowd", diversidad: false, ambiente: "mix", camara: "aerea", ritmo: "lento", duracion: "d8",
+      audio: "fx", estilo: "foto", paleta: "calida", luz: "dorada", prop: "p169" }
+  ];
+  var PRESETS = { imagen: PRESETS_IMG, video: PRESETS_VID };
+  var PRESET_LABELS = {
+    imagen: ["A1 Vocabulario: cocina", "B1 Describir: mercado", "C1 Portada: memoria", "B2 Personaje: escritor del XVII"],
+    video: ["A2 Vocabulario: la compra", "B1 Escuchar: cafetería", "B2 Apertura: ciudad"]
+  };
+
+  var state = blank();
+  var current = { plain: "" };
+
+  /* ---------- Utilidades ---------- */
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function strip(s) { return (s || "").trim().replace(/[\s.,;:]+$/, ""); }
+  function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function endp(s) { s = strip(s); return s ? s + "." : ""; }
+  function find(list, id) {
+    for (var i = 0; i < list.length; i++) { if (list[i].id === id) return list[i]; }
+    return null;
+  }
+
+  /* ---------- Construcción del formulario ---------- */
+  function chips(host, name, items, withSwatch) {
+    var h = "";
+    items.forEach(function (it) {
+      var id = name + "-" + it.id;
+      var sw = "";
+      if (withSwatch && it.sw && it.sw.length) {
+        sw = '<span class="sw" aria-hidden="true">' + it.sw.map(function (c) { return '<i style="background:' + c + '"></i>'; }).join("") + "</span>";
+      }
+      h += '<label class="chip" for="' + id + '"><input type="radio" name="' + name + '" id="' + id + '" value="' + it.id + '"><span class="t">' + sw + esc(it.label) + "</span></label>";
+    });
+    $(host).innerHTML = h;
+  }
+
+  chips("g-nivel", "nivel", D.nivel);
+  chips("g-kind", "kind", D.kind);
+  chips("g-nDif", "nDif", D.nDif);
+  chips("g-nVin", "nVin", D.nVin);
+  chips("g-personas", "personas", D.personas);
+  chips("g-detalle", "detalle", D.detalle);
+  chips("g-encuadre", "encuadre", D.encuadre);
+  chips("g-fondo", "fondo", D.fondo);
+  chips("g-prop", "prop", D.prop);
+  chips("g-destino", "destino", D.destino);
+  chips("g-estilo", "estilo", D.estilo);
+  chips("g-paleta", "paleta", D.paleta, true);
+  chips("g-luz", "luz", D.luz);
+  chips("g-textoModo", "textoModo", D.textoModo);
+  chips("g-idioma", "idioma", D.idioma);
+  chips("g-estructura", "estructura", D.estructura);
+  chips("g-modo", "modo", D.modo);
+  chips("g-kindV", "kindV", D.kindV);
+  chips("g-camara", "camara", D.camara);
+  chips("g-ritmo", "ritmo", D.ritmo);
+  chips("g-duracion", "duracion", D.duracion);
+  chips("g-audio", "audio", D.audio);
+  chips("g-hEnfoque", "hEnfoque", D.hEnfoque);
+
+  $("ambiente").innerHTML = D.ambiente.map(function (a) {
+    return '<option value="' + a.id + '">' + esc(a.label) + "</option>";
+  }).join("");
+
+  $("g-avoid").innerHTML = D.avoid.map(function (a) {
+    return '<label class="check" for="avoid-' + a.id + '"><input type="checkbox" id="avoid-' + a.id + '" data-avoid="' + a.id + '"><span>' + esc(a.label) + "</span></label>";
+  }).join("");
+
+  /* ---------- Estado a pantalla ---------- */
+  function histOn() { return state.modo === "video" ? state.kindV === "v_historico" : state.kind === "historico"; }
+  function isDif() { return state.modo !== "video" && state.kind === "diferencias"; }
+  function isComic() { return state.modo !== "video" && (state.kind === "desordenado" || state.kind === "bocadillos"); }
+
+  /* Ajustes y avisos de los recursos de actividad (diferencias y cómics) */
+  function recExtra(lang) {
+    var es = lang === "es";
+    if (state.modo === "video") return "";
+    if (state.kind === "diferencias") {
+      return es
+        ? "Exactamente " + state.nDif + " diferencias entre las dos versiones, visibles a simple vista y repartidas por toda la escena. Todo lo demás es idéntico en ambas versiones."
+        : "Exactly " + state.nDif + " differences between the two versions, visible at a glance and spread across the whole scene. Everything else is identical in both versions.";
+    }
+    if (state.kind === "desordenado") {
+      return es
+        ? "Historia de " + state.nVin + " viñetas dibujadas como cuadros independientes, con márgenes blancos visibles para poder recortarlas. Cada viñeta cambia lo bastante respecto a la anterior para deducir el orden. No numerar las viñetas. Los personajes se reconocen en todas ellas."
+        : "Story of " + state.nVin + " panels drawn as independent frames, with visible white margins so they can be cut out. Each panel changes enough from the previous one to work out the order. Do not number the panels. The characters are recognisable in every panel.";
+    }
+    if (state.kind === "bocadillos") {
+      return es
+        ? "Cómic de " + state.nVin + " viñetas, con un bocadillo vacío por viñeta: grande, con espacio para una o dos frases y sin ninguna letra, signo ni garabato dentro. Los personajes se reconocen en todas las viñetas."
+        : "Comic of " + state.nVin + " panels, with one empty speech bubble per panel: large, with room for one or two sentences and with no letters, signs or scribbles inside. The characters are recognisable in every panel.";
+    }
+    return "";
+  }
+  function recWarns() {
+    var w = [];
+    if (state.modo === "video") return w;
+    if (state.kind === "diferencias") {
+      w.push({ k: "tip", t: "Los generadores de imagen pueden no crear dos versiones idénticas con diferencias exactas. Suele funcionar mejor generar la escena y pedir después, en el mismo chat, una segunda versión con cambios concretos que tú indiques. Cuenta las diferencias y apunta la solución." });
+      if (["p34", "p916", "p57", "p11"].indexOf(state.prop) > -1) {
+        w.push({ k: "tip", t: "Para dos versiones una junto a otra conviene una proporción horizontal (16:9 o 4:3). También puedes pedir una sobre otra." });
+      }
+    }
+    if (state.kind === "desordenado") {
+      w.push({ k: "tip", t: "El generador entrega las viñetas en su orden lógico. Recórtalas y desordénalas tú, o pídele después que las coloque en otro orden, y guarda la solución." });
+      w.push({ k: "tip", t: "Con muchas viñetas la coherencia entre ellas puede fallar (personajes, ropa, decorado). Si pasa, genera cada viñeta por separado con la misma descripción de los personajes." });
+    }
+    if (state.kind === "bocadillos") {
+      w.push({ k: "tip", t: "Comprueba que los bocadillos salgan vacíos: algunas herramientas escriben texto inventado dentro. Si pasa, bórralo en un editor o pide una versión sin texto." });
+      w.push({ k: "tip", t: "Con muchas viñetas la coherencia entre ellas puede fallar (personajes, ropa, decorado). Si pasa, genera cada viñeta por separado con la misma descripción de los personajes." });
+    }
+    if (isComic() && state.estilo === "none") {
+      w.push({ k: "tip", t: "Para un cómic conviene elegir estilo (por ejemplo Cómic, Línea limpia o Ilustración plana), para que todas las viñetas lo compartan." });
+    }
+    return w;
+  }
+
+  function histLine(lang) {
+    var es = lang === "es";
+    var parts = [];
+    var n = strip(state.hNombre);
+    if (n) parts.push(endp((es ? "Figura representada: " : "Figure depicted: ") + n));
+    var e = strip(state.hEdad);
+    if (e) parts.push(endp((es ? "Edad aproximada: " : "Approximate age: ") + e));
+    var ep = strip(state.hEpoca);
+    if (ep) parts.push(endp((es ? "Época y lugar: " : "Period and place: ") + ep));
+    var r = strip(state.hRasgos);
+    if (r) parts.push(endp((es ? "Rasgos documentados: " : "Documented features: ") + r));
+    var ind = strip(state.hIndum);
+    if (ind) parts.push(endp((es ? "Indumentaria y objetos de época: " : "Period clothing and objects: ") + ind));
+    var en = find(D.hEnfoque, state.hEnfoque);
+    if (en) parts.push(endp(cap(en[lang])));
+    return parts.length ? { label: es ? "Personaje" : "Figure", text: parts.join(" ") } : null;
+  }
+  function histWarns() {
+    var w = [];
+    if (!strip(state.hEpoca)) w.push({ k: "tip", t: "Indica época y lugar para reducir los anacronismos." });
+    if (state.estilo === "foto" && state.hArtistico) {
+      w.push({ k: "tip", t: "Has elegido fotografía realista, pero el aspecto artístico está activado: se ha ignorado la fotografía. Desmarca esa opción si quieres fotorrealismo." });
+    } else if (state.estilo === "foto") {
+      w.push({ k: "tip", t: "Una fotografía realista de una figura histórica puede confundirse con un retrato auténtico. Un estilo pictórico o de grabado deja claro que es una interpretación." });
+    }
+    if (strip(state.hNombre)) w.push({ k: "tip", t: "Algunas herramientas rechazan nombres de personas reales. Si te pasa, vacía el campo de la figura y deja solo los rasgos y la época." });
+    w.push({ k: "tip", t: "Contrasta indumentaria, objetos y entorno con fuentes fiables, e indica que la imagen es una reconstrucción hecha con IA, no un retrato auténtico." });
+    return w;
+  }
+  function histHasData() { return !!(strip(state.hNombre) || strip(state.hRasgos) || strip(state.hEpoca)); }
+  function avoidText(a, lang) {
+    if (a.id === "derechos" && histOn()) return lang === "es" ? "personajes de ficción conocidos" : "well-known fictional characters";
+    return a[lang];
+  }
+  function styleText(lang) {
+    var est = find(D.estilo, state.estilo);
+    var t = est && est[lang] ? est[lang] : "";
+    if (histOn() && state.hArtistico) t = (t && state.estilo !== "foto") ? t + "; " + ART[lang] : ART[lang];
+    return t;
+  }
+
+  function show(id, on) { var el = $(id); if (el) el.hidden = !on; }
+
+  function sync() {
+    var vid = state.modo === "video";
+    if (renderedMode !== state.modo) renderPresets();
+    RADIOS.forEach(function (n) {
+      var el = $(n + "-" + state[n]);
+      if (el && !el.checked) el.checked = true;
+    });
+    TEXTS.forEach(function (n) {
+      var el = $(n);
+      if (el && el.value !== state[n]) el.value = state[n];
+    });
+    $("diversidad").checked = !!state.diversidad;
+    $("continuo").checked = !!state.continuo;
+    $("hArtistico").checked = !!state.hArtistico;
+    $("conImagen").checked = !!state.conImagen;
+    $("acc").checked = !!state.acc;
+    D.avoid.forEach(function (a) { $("avoid-" + a.id).checked = !!state.avoid[a.id]; });
+
+    var many = ["two", "small", "crowd"].indexOf(state.personas) > -1;
+    $("diversidad").disabled = !many;
+    $("texto").disabled = state.textoModo !== "exact";
+
+    var mj = !vid && MODE[state.herramienta] === "mj";
+    $("herrHintV").textContent = HERR_HINT_V[state.herramientaV] || "";
+    $("dialogo").disabled = state.audio !== "dial";
+    $("acento").disabled = state.audio !== "dial";
+    $("herrHint").textContent = HERR_HINT[MODE[state.herramienta] || "nl"];
+    D.estructura.forEach(function (e) { $("estructura-" + e.id).disabled = mj; });
+    $("estructuraHint").textContent = mj ? "Midjourney recibe un solo párrafo, con los parámetros al final." : "";
+
+    $("detalleHint").textContent = state.detalleTouched
+      ? "Detalle elegido por ti."
+      : "Sugerido para el nivel " + state.nivel + ". Puedes cambiarlo.";
+
+    show("sec-hist", histOn());
+    show("f-kind", !vid); show("f-kindV", vid); show("sec-mov", vid);
+    show("f-nDif", isDif()); show("f-nVin", isComic());
+    show("f-destino", !vid); show("f-herr", !vid); show("f-herrV", vid);
+    D.prop.forEach(function (pr) {
+      var el = $("prop-" + pr.id);
+      if (el) el.closest(".chip").hidden = vid && pr.id !== "p169" && pr.id !== "p916";
+    });
+    var cor = $("avoid-cortes");
+    if (cor) cor.closest(".check").hidden = !vid;
+    $("h1word").textContent = vid ? "vídeo" : "imagen";
+    $("temaLabel").textContent = vid ? "¿Qué ocurre en el vídeo?" : "¿Qué debe mostrar la imagen?";
+    $("temaHint").textContent = vid ? "Es el único dato obligatorio. Describe quién está, dónde y qué hace." : "Es el único dato obligatorio. Describe lugar, acciones y momento.";
+    $("tema").placeholder = vid ? TEMA_PH.video : TEMA_PH.imagen;
+    $("legEncuadre").textContent = vid ? "Plano inicial" : "Encuadre";
+    $("legTexto").textContent = vid ? "Texto en pantalla" : "Texto dentro de la imagen";
+  }
+
+  /* ---------- Construcción del prompt ---------- */
+  function build() {
+    var lang = state.idioma;
+    var tt = T[lang];
+    var mode = MODE[state.herramienta] || "nl";
+    var mj = mode === "mj";
+    var sepNeg = mode === "neg";
+    var structured = state.estructura === "estructurado" && !mj;
+    var lines = [];
+    var warns = [];
+    var neg = [];
+
+    // Introducción
+    lines.push({
+      label: null,
+      text: lang === "es"
+        ? "Imagen para uso didáctico en una clase de español como lengua extranjera (nivel " + state.nivel + ")."
+        : "Image for educational use in a Spanish as a foreign language class (level " + state.nivel + ")."
+    });
+
+    // Recurso
+    var kind = find(D.kind, state.kind);
+    lines.push({ label: tt.kind, text: endp(cap(kind[lang])) });
+    var rx = recExtra(lang);
+    if (rx) lines.push({ label: tt.opts, text: rx });
+    recWarns().forEach(function (x) { warns.push(x); });
+    if (histOn()) {
+      var hl = histLine(lang);
+      if (hl) lines.push(hl);
+      histWarns().forEach(function (x) { warns.push(x); });
+    }
+
+    // Escena
+    var scene = [];
+    var tema = strip(state.tema);
+    if (tema) {
+      scene.push(endp(cap(tema)));
+    } else if (!(histOn() && histHasData())) {
+      warns.push({ k: "need", t: "Describe la escena en el apartado Escena. Es el único dato obligatorio." });
+    }
+    var must = strip(state.elementos);
+    if (must) scene.push(endp((lang === "es" ? "Debe incluir " : "It must include ") + must));
+    var pe = find(D.personas, state.personas);
+    if (pe) {
+      var ptxt = pe[lang];
+      var many = ["two", "small", "crowd"].indexOf(state.personas) > -1;
+      if (many && state.diversidad) ptxt += ", " + D.diversidad[lang];
+      scene.push(endp((lang === "es" ? "Personas en la escena: " : "People in the scene: ") + ptxt));
+    }
+    var amb = find(D.ambiente, state.ambiente);
+    if (amb && amb[lang]) scene.push(endp(cap(amb[lang])));
+    if (scene.length) lines.push({ label: tt.scene, text: scene.join(" ") });
+
+    // Composición
+    var comp = [];
+    var det = find(D.detalle, state.detalle);
+    if (det) comp.push(det[lang]);
+    var enc = find(D.encuadre, state.encuadre);
+    if (enc && enc[lang]) comp.push(enc[lang]);
+    var fon = find(D.fondo, state.fondo);
+    if (fon && fon[lang]) comp.push(fon[lang]);
+    if (comp.length) lines.push({ label: tt.comp, text: endp(cap(comp.join("; "))) });
+
+    // Estilo
+    var stx = styleText(lang);
+    if (stx) {
+      lines.push({ label: tt.style, text: endp(cap(stx)) });
+    } else {
+      warns.push({ k: "tip", t: "Sin estilo elegido, la herramienta decidirá por ti." });
+    }
+
+    // Color y luz
+    var col = [];
+    var pal = find(D.paleta, state.paleta);
+    if (pal && pal[lang]) col.push(pal[lang]);
+    var cc = strip(state.colores);
+    if (cc) col.push((lang === "es" ? "con acentos en " : "with accents in ") + cc);
+    var luz = find(D.luz, state.luz);
+    if (luz && luz[lang]) col.push(luz[lang]);
+    if (state.acc) col.push(D.acc[lang]);
+    if (col.length) lines.push({ label: tt.color, text: endp(cap(col.join("; "))) });
+
+    // Formato
+    var fmt = [];
+    var prop = find(D.prop, state.prop);
+    if (prop && !mj) fmt.push(prop[lang]);
+    var des = find(D.destino, state.destino);
+    if (des) fmt.push(des[lang]);
+    if (fmt.length) lines.push({ label: tt.format, text: endp(cap(fmt.join("; "))) });
+
+    // Texto
+    var txt = strip(state.texto);
+    var exact = state.textoModo === "exact" && txt;
+    if (state.textoModo === "exact" && !txt) {
+      warns.push({ k: "need", t: "Has elegido texto exacto pero el campo está vacío. Escríbelo o cambia a «Sin texto»." });
+    }
+    if (exact) {
+      lines.push({
+        label: tt.text,
+        text: lang === "es"
+          ? 'Escribir exactamente: "' + txt + '", bien legible y sin errores ortográficos.'
+          : 'Write exactly: "' + txt + '", clearly legible and spelled correctly.',
+        compact: lang === "es"
+          ? 'Incluye este texto exacto, bien legible y sin errores ortográficos: "' + txt + '".'
+          : 'Include this exact text, clearly legible and spelled correctly: "' + txt + '".'
+      });
+      warns.push({ k: "tip", t: "Revisa tildes, eñes y signos de apertura (¿ ¡) en el resultado. Si puedes, añade el texto después en tu editor." });
+    } else if (mj || sepNeg) {
+      neg.push(lang === "es" ? "texto, letras y números" : "text, letters and numbers");
+    } else {
+      lines.push({
+        label: tt.text,
+        text: lang === "es" ? "Ninguno. No incluir letras, palabras ni números." : "None. Do not include letters, words or numbers.",
+        compact: lang === "es" ? "No incluir texto, letras ni números en la imagen." : "Do not include any text, letters or numbers in the image."
+      });
+    }
+
+    // Evitar
+    var av = [];
+    D.avoid.forEach(function (a) { if (state.avoid[a.id] && !a.vid) av.push(avoidText(a, lang)); });
+    var otros = strip(state.otros);
+    if (otros) av.push(otros);
+    if (mj || sepNeg) {
+      av = neg.concat(av);
+    } else if (av.length) {
+      lines.push({
+        label: tt.avoid,
+        text: endp(av.join(", ")),
+        compact: endp((lang === "es" ? "Evita " : "Avoid ") + av.join(", "))
+      });
+    }
+
+    // Avisos de coherencia
+    if (state.destino === "bn" && ["acuarela", "foto", "oleo", "3d"].indexOf(state.estilo) > -1) {
+      warns.push({ k: "tip", t: "Este estilo suele perder nitidez al fotocopiar en blanco y negro. La línea limpia o la ilustración plana pueden funcionar mejor." });
+    }
+    if (state.kind === "vocab" && state.detalle === "rich") {
+      warns.push({ k: "tip", t: "Para vocabulario suele convenir un detalle mínimo o medio, para que cada elemento se reconozca." });
+    }
+    if (state.kind === "diferencias" && state.detalle === "min") {
+      warns.push({ k: "tip", t: "Con un detalle mínimo hay pocos elementos que cambiar. Para encontrar varias diferencias conviene un detalle medio o rico." });
+    }
+
+    // Texto final
+    var plain, html, suffix = "";
+    if (mj) {
+      suffix = "--ar " + (prop ? prop.ar : "4:3");
+      if (av.length) suffix += " --no " + av.join(", ");
+      plain = lines.map(function (l) { return l.compact || l.text; }).join(" ") + " " + suffix;
+      html = '<p class="ln">' + esc(lines.map(function (l) { return l.compact || l.text; }).join(" ")) + '<span class="mj">' + esc(suffix) + "</span></p>";
+    } else if (structured) {
+      plain = lines.map(function (l) { return l.label ? l.label + ": " + l.text : l.text; }).join("\n");
+      html = lines.map(function (l) {
+        return '<p class="ln">' + (l.label ? '<span class="lab">' + esc(l.label) + ":</span> " : "") + esc(l.text) + "</p>";
+      }).join("");
+    } else {
+      plain = lines.map(function (l) { return l.compact || l.text; }).join(" ");
+      html = '<p class="ln">' + esc(plain) + "</p>";
+    }
+
+    if (sepNeg && av.length) {
+      var nl = lang === "es" ? "Prompt negativo" : "Negative prompt";
+      plain += "\n\n" + nl + ": " + av.join(", ");
+      html += '<p class="ln sep"><span class="lab">' + esc(nl) + ":</span> " + esc(av.join(", ")) + "</p>";
+    }
+
+    return { plain: plain, html: html, warns: warns, mj: mj, structured: structured };
+  }
+
+  function buildVideo() {
+    var lang = state.idioma;
+    var es = lang === "es";
+    var tt = T[lang];
+    var structured = state.estructura === "estructurado";
+    var img = !!state.conImagen;
+    var lines = [];
+    var warns = [];
+
+    lines.push({
+      label: null,
+      text: es
+        ? "Vídeo para uso didáctico en una clase de español como lengua extranjera (nivel " + state.nivel + ")."
+        : "Video for educational use in a Spanish as a foreign language class (level " + state.nivel + ")."
+    });
+
+    var kind = find(D.kindV, state.kindV);
+    lines.push({ label: tt.kind, text: endp(cap(kind[lang])) });
+    if (histOn()) {
+      var hl = histLine(lang);
+      if (hl) lines.push(hl);
+      histWarns().forEach(function (x) { warns.push(x); });
+    }
+
+    if (img) {
+      lines.push({
+        label: tt.base,
+        text: es
+          ? "Anima la imagen adjunta y mantén su composición, sus personajes y su estilo."
+          : "Animate the attached image and keep its composition, characters and style."
+      });
+    }
+
+    var scene = [];
+    var tema = strip(state.tema);
+    if (tema) {
+      scene.push(endp(cap(tema)));
+    } else if (!(histOn() && histHasData())) {
+      warns.push({ k: "need", t: img ? "Describe qué se mueve en el apartado Escena." : "Describe qué ocurre en el apartado Escena. Es el único dato obligatorio." });
+    }
+    if (!img) {
+      var must = strip(state.elementos);
+      if (must) scene.push(endp((es ? "Debe incluir " : "It must include ") + must));
+      var pe = find(D.personas, state.personas);
+      if (pe) {
+        var ptxt = pe[lang];
+        if (["two", "small", "crowd"].indexOf(state.personas) > -1 && state.diversidad) ptxt += ", " + D.diversidad[lang];
+        scene.push(endp((es ? "Personas en la escena: " : "People in the scene: ") + ptxt));
+      }
+      var amb = find(D.ambiente, state.ambiente);
+      if (amb && amb[lang]) scene.push(endp(cap(amb[lang])));
+    }
+    if (scene.length) lines.push({ label: img ? tt.action : tt.scene, text: scene.join(" ") });
+
+    // Movimiento
+    var mo = [];
+    var cam = find(D.camara, state.camara);
+    if (cam && cam[lang]) mo.push(cam[lang]);
+    var rit = find(D.ritmo, state.ritmo);
+    if (rit && rit[lang]) mo.push(rit[lang]);
+    var dur = find(D.duracion, state.duracion);
+    if (dur && dur[lang]) mo.push(dur[lang]);
+    if (state.continuo) mo.push(es ? "un solo plano continuo, sin cortes" : "a single continuous shot, no cuts");
+    var mparts = [];
+    if (mo.length) mparts.push(endp(cap(mo.join("; "))));
+    var ini = strip(state.inicio);
+    var fin = strip(state.final);
+    if (ini) mparts.push(endp((es ? "Al comenzar, " : "At the start, ") + ini));
+    if (fin) mparts.push(endp((es ? "Al terminar, " : "At the end, ") + fin));
+    if (mparts.length) lines.push({ label: tt.motion, text: mparts.join(" ") });
+
+    if (!img) {
+      var comp = [];
+      var det = find(D.detalle, state.detalle);
+      if (det) comp.push(det[lang]);
+      var enc = find(D.encuadre, state.encuadre);
+      if (enc && enc[lang]) comp.push(enc[lang]);
+      var fon = find(D.fondo, state.fondo);
+      if (fon && fon[lang]) comp.push(fon[lang]);
+      if (comp.length) lines.push({ label: es ? "Plano inicial" : "Opening shot", text: endp(cap(comp.join("; "))) });
+
+      var stx = styleText(lang);
+      if (stx) {
+        lines.push({ label: tt.style, text: endp(cap(stx)) });
+      } else {
+        warns.push({ k: "tip", t: "Sin estilo elegido, la herramienta decidirá por ti." });
+      }
+
+      var col = [];
+      var pal = find(D.paleta, state.paleta);
+      if (pal && pal[lang]) col.push(pal[lang]);
+      var cc = strip(state.colores);
+      if (cc) col.push((es ? "con acentos en " : "with accents in ") + cc);
+      var luz = find(D.luz, state.luz);
+      if (luz && luz[lang]) col.push(luz[lang]);
+      if (state.acc) col.push(D.acc[lang]);
+      if (col.length) lines.push({ label: tt.color, text: endp(cap(col.join("; "))) });
+
+      var prop = find(D.prop, state.prop);
+      if (prop) lines.push({ label: es ? "Formato" : "Format", text: endp(cap(prop[lang])) });
+    } else {
+      warns.push({ k: "tip", t: "Con imagen de partida, la escena, el estilo, el color y el formato se toman de la imagen. Esos apartados no entran en el prompt." });
+    }
+
+    // Audio
+    var atxt;
+    if (state.audio === "dial") {
+      var dtxt = strip(state.dialogo);
+      atxt = es ? "con diálogo breve en español" : "with a short dialogue in Spanish";
+      if (dtxt) {
+        atxt += ': "' + dtxt + '"';
+      } else {
+        warns.push({ k: "need", t: "Has elegido audio con diálogo pero el campo está vacío. Escribe la frase o cambia el audio." });
+      }
+      var ac = strip(state.acento);
+      if (ac) atxt += (es ? ", con " : ", with ") + ac;
+      warns.push({ k: "tip", t: "Revisa la pronunciación y el acento. Según la guía de Google para Flow, el diálogo es menos probable si no cabe en el clip o si aparecen menores. No tengo claro qué calidad tiene el español generado en cada herramienta." });
+    } else {
+      atxt = find(D.audio, state.audio)[lang];
+      if (state.kindV === "v_escuchar") {
+        warns.push({ k: "tip", t: "Para comprensión auditiva necesitas audio con diálogo. Revisa la opción de audio." });
+      }
+    }
+    lines.push({ label: tt.audio, text: endp(cap(atxt)) });
+
+    // Texto en pantalla
+    var txt = strip(state.texto);
+    var exact = state.textoModo === "exact" && txt;
+    if (state.textoModo === "exact" && !txt) {
+      warns.push({ k: "need", t: "Has elegido texto exacto pero el campo está vacío. Escríbelo o cambia a «Sin texto»." });
+    }
+    var tl = es ? "Texto en pantalla" : "On-screen text";
+    if (exact) {
+      lines.push({
+        label: tl,
+        text: es ? 'Mostrar exactamente: "' + txt + '", bien legible y sin errores ortográficos.' : 'Show exactly: "' + txt + '", clearly legible and spelled correctly.',
+        compact: es ? 'Muestra en pantalla este texto exacto, bien legible y sin errores ortográficos: "' + txt + '".' : 'Show this exact text on screen, clearly legible and spelled correctly: "' + txt + '".'
+      });
+      warns.push({ k: "tip", t: "Revisa tildes, eñes y signos de apertura (¿ ¡) en el resultado. Si puedes, añade el texto después en tu editor de vídeo." });
+    } else {
+      lines.push({
+        label: tl,
+        text: es ? "Ninguno. No incluir subtítulos, letras ni números." : "None. Do not include subtitles, letters or numbers.",
+        compact: es ? "No incluir subtítulos, texto, letras ni números en pantalla." : "Do not include subtitles, text, letters or numbers on screen."
+      });
+    }
+
+    // Evitar
+    var av = [];
+    D.avoid.forEach(function (a) { if (state.avoid[a.id]) av.push(avoidText(a, lang)); });
+    var otros = strip(state.otros);
+    if (otros) av.push(otros);
+    if (av.length) {
+      lines.push({
+        label: tt.avoid,
+        text: endp(av.join(", ")),
+        compact: endp((es ? "Evita " : "Avoid ") + av.join(", "))
+      });
+    }
+
+    if (state.herramientaV === "flow" && state.duracion === "d10") {
+      warns.push({ k: "tip", t: "Según la ayuda de Google, los 10 s en Flow solo están con Gemini Omni. Con Veo 3.1 los clips son de 4, 6 u 8 s." });
+    }
+
+    var plain, html;
+    if (structured) {
+      plain = lines.map(function (l) { return l.label ? l.label + ": " + l.text : l.text; }).join("\n");
+      html = lines.map(function (l) {
+        return '<p class="ln">' + (l.label ? '<span class="lab">' + esc(l.label) + ":</span> " : "") + esc(l.text) + "</p>";
+      }).join("");
+    } else {
+      plain = lines.map(function (l) { return l.compact || l.text; }).join(" ");
+      html = '<p class="ln">' + esc(plain) + "</p>";
+    }
+    return { plain: plain, html: html, warns: warns, mj: false, structured: structured };
+  }
+
+  function render() {
+    var r = state.modo === "video" ? buildVideo() : build();
+    current = r;
+    $("out").innerHTML = r.html;
+    var words = r.plain.trim().split(/\s+/).length;
+    $("meta").textContent = words + " palabras · " + (state.idioma === "es" ? "Español" : "English") + " · " +
+      (state.modo === "video" ? "Vídeo · " : "") + (r.mj ? "Midjourney" : (r.structured ? "Por apartados" : "Texto continuo"));
+    $("warns").innerHTML = r.warns.map(function (w) {
+      return '<li><span class="badge ' + w.k + '">' + (w.k === "need" ? "Falta" : "Revisar") + "</span><span>" + esc(w.t) + "</span></li>";
+    }).join("");
+  }
+
+  /* ---------- Eventos ---------- */
+  function onInput(e) {
+    var t = e.target;
+    if (!t || !t.name && !t.dataset.avoid) return;
+    if (t.type === "radio") {
+      state[t.name] = t.value;
+      if (t.name === "nivel" && !state.detalleTouched) state.detalle = D.detalleNivel[t.value];
+      if (t.name === "detalle") state.detalleTouched = true;
+      if (t.name === "modo" && t.value === "video" && state.prop !== "p169" && state.prop !== "p916") state.prop = "p169";
+      if (t.name === "kind" && t.value === "diferencias" && !state.detalleTouched && state.detalle === "min") state.detalle = "med";
+    } else if (t.type === "checkbox") {
+      if (t.dataset.avoid) state.avoid[t.dataset.avoid] = t.checked;
+      else state[t.name] = t.checked;
+    } else {
+      state[t.name] = t.value;
+    }
+    $("exampleNote").hidden = true;
+    sync();
+    render();
+  }
+  $("form").addEventListener("input", onInput);
+  $("form").addEventListener("change", onInput);
+  $("form").addEventListener("submit", function (e) { e.preventDefault(); });
+  $("g-modo").addEventListener("input", onInput);
+  $("g-modo").addEventListener("change", onInput);
+
+  var renderedMode = null;
+  function renderPresets() {
+    $("presetBtns").innerHTML = PRESET_LABELS[state.modo].map(function (l, i) {
+      return '<button type="button" class="btn" data-preset="' + i + '">' + esc(l) + "</button>";
+    }).join("");
+    renderedMode = state.modo;
+  }
+
+  function loadPreset(i) {
+    var mode = state.modo;
+    var s = blank();
+    s.modo = mode;
+    var p = PRESETS[mode][i];
+    Object.keys(p).forEach(function (k) { s[k] = p[k]; });
+    if (s.avoid.cortes === undefined) s.avoid.cortes = true;
+    s.detalle = D.detalleNivel[s.nivel];
+    s.detalleTouched = false;
+    state = s;
+    sync();
+    render();
+    $("exampleNote").hidden = false;
+  }
+
+  $("presetBtns").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-preset]");
+    if (b) loadPreset(parseInt(b.getAttribute("data-preset"), 10));
+  });
+  $("reset").addEventListener("click", function () {
+    var m = state.modo;
+    state = blank();
+    state.modo = m;
+    sync();
+    render();
+    $("exampleNote").hidden = true;
+    $("tema").focus();
+  });
+
+  /* ---------- Copiar ---------- */
+  var timer = null;
+  function say(msg, copied) {
+    $("status").textContent = msg;
+    $("copy").textContent = copied ? "Copiado" : "Copiar prompt";
+    $("copy2").textContent = copied ? "Copiado" : "Copiar prompt";
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      $("status").textContent = "";
+      $("copy").textContent = "Copiar prompt";
+      $("copy2").textContent = "Copiar prompt";
+    }, 2600);
+  }
+  function selectOut() {
+    try {
+      var rg = document.createRange();
+      rg.selectNodeContents($("out"));
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(rg);
+    } catch (err) { /* sin selección posible */ }
+    say("Prompt seleccionado. Pulsa Ctrl+C o Cmd+C para copiarlo.", false);
+  }
+  function copyPrompt() {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(current.plain).then(function () {
+          say("Prompt copiado al portapapeles.", true);
+        }, selectOut);
+      } else {
+        selectOut();
+      }
+    } catch (err) {
+      selectOut();
+    }
+  }
+  $("copy").addEventListener("click", copyPrompt);
+  $("copy2").addEventListener("click", copyPrompt);
+  $("goPanel").addEventListener("click", function () {
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    $("panel").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  });
+
+  /* ---------- Arranque con un ejemplo ---------- */
+  loadPreset(1);
+})();
+</script>
