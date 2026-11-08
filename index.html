@@ -104,8 +104,12 @@ h1 {
 h1 mark {
   color: inherit;
   background: linear-gradient(transparent 62%, var(--c3) 62%, var(--c3) 92%, transparent 92%);
+  background-repeat: no-repeat;
+  background-position: 0 0;
   padding-inline: .08em;
+  animation: mark .9s .35s ease-out both;
 }
+@keyframes mark { from { background-size: 0% 100%; } to { background-size: 100% 100%; } }
 .lead { margin: 0 0 1.5rem; max-width: 56ch; color: var(--muted); font-size: 1.1rem; }
 .presets { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; }
 .presets .lab { font: 500 .75rem/1 var(--f-mono); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); margin-right: .25rem; }
@@ -128,16 +132,86 @@ h1 mark {
 }
 .note { margin: .9rem 0 0; font-size: .92rem; font-weight: 600; color: var(--ok); }
 
-/* Manchas decorativas */
-.dabs { display: flex; align-items: flex-end; font-size: 1rem; padding-right: .5rem; }
-.dabs i { display: block; border-radius: 50%; margin-left: -1.1em; opacity: .95; }
-.dabs i:nth-child(1) { width: 5.6em; height: 5.6em; background: var(--c1); margin-left: 0; }
-.dabs i:nth-child(2) { width: 3.4em; height: 3.4em; background: var(--c3); }
-.dabs i:nth-child(3) { width: 4.6em; height: 4.6em; background: var(--c2); }
-.dabs i:nth-child(4) { width: 2.6em; height: 2.6em; background: var(--c4); }
-.dabs i:nth-child(5) { width: 3.8em; height: 3.8em; background: var(--c5); }
-.dabs i:nth-child(6) { width: 2.2em; height: 2.2em; background: var(--c6); }
-@media (max-width: 799px) { .dabs { font-size: .55rem; } }
+/* Cabecera animada: aurora de color al fondo, visor con una escena que se dibuja, escritura de ejemplos y cinta de recursos */
+:root {
+  --sky1: #FFE3BC;
+  --sky2: #FFB4A6;
+  --cloud: rgba(255, 255, 255, .8);
+  --blob-o: .38;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --sky1: #3B2B6E; --sky2: #7A3F72; --cloud: rgba(255, 255, 255, .22); --blob-o: .26; }
+}
+:root[data-theme="dark"] { --sky1: #3B2B6E; --sky2: #7A3F72; --cloud: rgba(255, 255, 255, .22); --blob-o: .26; }
+
+.top { position: relative; isolation: isolate; overflow: hidden; padding-block: 3rem 0; }
+.top .hero { padding-bottom: 2.5rem; }
+.top + .layout { padding-top: 2rem; }
+
+.aurora { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.aurora i { position: absolute; width: 26rem; height: 26rem; border-radius: 50%; filter: blur(64px); opacity: var(--blob-o); animation: aurora var(--dur, 18s) ease-in-out infinite alternate; }
+.aurora i:nth-child(1) { background: var(--c1); left: -6rem; top: -8rem; --dur: 17s; --dx: 9rem; --dy: 4rem; }
+.aurora i:nth-child(2) { background: var(--c3); left: 32%; top: -12rem; --dur: 21s; --dx: -7rem; --dy: 5rem; }
+.aurora i:nth-child(3) { background: var(--c5); right: -8rem; top: -4rem; --dur: 19s; --dx: -6rem; --dy: 7rem; }
+.aurora i:nth-child(4) { background: var(--c4); left: 8%; bottom: -14rem; --dur: 23s; --dx: 10rem; --dy: -4rem; }
+@keyframes aurora { from { translate: 0 0; scale: 1; } to { translate: var(--dx) var(--dy); scale: 1.18; } }
+
+.hero > div:first-child > * { animation: rise .7s cubic-bezier(.2, .8, .2, 1) both; }
+.hero > div:first-child > :nth-child(2) { animation-delay: .08s; }
+.hero > div:first-child > :nth-child(3) { animation-delay: .16s; }
+.hero > div:first-child > :nth-child(4) { animation-delay: .24s; }
+.hero > div:first-child > :nth-child(5) { animation-delay: .32s; }
+@keyframes rise { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+
+.dabwrap { display: grid; justify-items: start; gap: .9rem; width: min(100%, 25rem); min-width: 0; }
+.vf { position: relative; width: 100%; padding: .85rem; }
+.vf .corner { position: absolute; width: 1.5rem; height: 1.5rem; border: 3px solid var(--ink); }
+.vf .tl { top: 0; left: 0; border-right: 0; border-bottom: 0; border-top-left-radius: 10px; }
+.vf .tr { top: 0; right: 0; border-left: 0; border-bottom: 0; border-top-right-radius: 10px; }
+.vf .bl { bottom: 0; left: 0; border-right: 0; border-top: 0; border-bottom-left-radius: 10px; }
+.vf .br { bottom: 0; right: 0; border-left: 0; border-top: 0; border-bottom-right-radius: 10px; }
+.stage { position: relative; aspect-ratio: 4 / 3; max-width: 100%; overflow: hidden; border-radius: 14px; background: linear-gradient(180deg, var(--sky1), var(--sky2)); }
+.rec { position: absolute; z-index: 3; left: .7rem; top: .6rem; display: inline-flex; align-items: center; gap: .4rem; padding: .2rem .6rem; border-radius: 999px; background: rgba(29, 22, 48, .8); color: #FFFFFF; font: 500 .68rem/1.4 var(--f-mono); letter-spacing: .08em; }
+.rec i { width: .55rem; height: .55rem; border-radius: 50%; background: #FF4D5A; animation: blink 1.6s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: .25; } }
+.sun { position: absolute; width: 24%; aspect-ratio: 1; left: 62%; top: 18%; border-radius: 50%; background: var(--c3); box-shadow: 0 0 0 .55rem rgba(255, 182, 39, .28), 0 0 0 1.2rem rgba(255, 182, 39, .14); animation: sun 7s ease-in-out infinite alternate; }
+@keyframes sun { from { translate: 0 .9rem; } to { translate: 0 -.4rem; } }
+.cloud { position: absolute; left: 0; height: 1rem; border-radius: 999px; background: var(--cloud); animation: drift var(--dur, 22s) linear infinite; }
+.cloud::before { content: ""; position: absolute; left: 22%; top: -.5rem; width: 45%; height: 1.2rem; border-radius: 999px; background: inherit; }
+.cloud.c1 { top: 26%; width: 4.2rem; --dur: 24s; animation-delay: -6s; }
+.cloud.c2 { top: 44%; width: 3rem; --dur: 31s; animation-delay: -18s; }
+@keyframes drift { from { translate: -6rem 0; } to { translate: 28rem 0; } }
+.hill { position: absolute; border-radius: 50%; aspect-ratio: 2 / 1; }
+.hill.a { width: 100%; left: -28%; bottom: -26%; background: var(--c4); animation: sway 9s ease-in-out infinite alternate; }
+.hill.b { width: 95%; right: -34%; bottom: -34%; background: var(--c5); animation: sway 11s ease-in-out infinite alternate-reverse; }
+@keyframes sway { from { translate: -.8rem 0; } to { translate: .8rem -.35rem; } }
+.drop { position: absolute; border-radius: 50%; animation: pop .8s cubic-bezier(.2, .9, .3, 1.25) both, bob var(--dur, 5s) ease-in-out infinite alternate; animation-delay: var(--in, 0s), calc(var(--in, 0s) + .8s); }
+.d1 { width: 2.1rem; height: 2.1rem; background: var(--c1); left: 12%; bottom: 30%; --in: .1s; --dur: 4.4s; --amp: .9; }
+.d2 { width: 1.4rem; height: 1.4rem; background: var(--c6); left: 31%; bottom: 44%; --in: .25s; --dur: 5.2s; --amp: 1.2; }
+.d3 { width: 2.6rem; height: 2.6rem; background: var(--c2); left: 47%; bottom: 22%; --in: .4s; --dur: 4.8s; --amp: .7; }
+.d4 { width: 1.2rem; height: 1.2rem; background: var(--c1); left: 80%; bottom: 36%; --in: .55s; --dur: 4s; --amp: 1; }
+@keyframes pop { from { scale: 0; opacity: 0; } to { scale: 1; opacity: 1; } }
+@keyframes bob { from { translate: 0 0; } to { translate: 0 calc(var(--amp, .5) * -1rem); } }
+.scan { position: absolute; top: 0; bottom: 0; left: -22%; width: 22%; z-index: 2; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .55), transparent); animation: scan 5.5s ease-in-out infinite; }
+@keyframes scan { 0% { translate: 0 0; } 55%, 100% { translate: 560% 0; } }
+
+.typed { margin: 0; min-height: 3.1em; max-width: 100%; font: 400 .88rem/1.55 var(--f-mono); color: var(--muted); overflow-wrap: anywhere; }
+.typed b { color: var(--accent); font-weight: 500; }
+.typed::after { content: ""; display: inline-block; width: .5ch; height: 1.05em; margin-left: 2px; vertical-align: -.18em; background: var(--accent); animation: caret 1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+
+.ticker { overflow: hidden; background: var(--panel); color: var(--panel-ink); padding: .8rem 0; }
+.ticker .track { display: flex; width: max-content; animation: ticker 48s linear infinite; }
+.ticker span { display: inline-flex; align-items: center; gap: .7rem; padding-right: 1.6rem; font: 500 .78rem/1 var(--f-mono); letter-spacing: .09em; text-transform: uppercase; white-space: nowrap; }
+.ticker span::before { content: ""; width: .6rem; height: .6rem; border-radius: 50%; background: var(--c1); }
+.ticker span:nth-child(6n+2)::before { background: var(--c2); }
+.ticker span:nth-child(6n+3)::before { background: var(--c3); }
+.ticker span:nth-child(6n+4)::before { background: var(--c4); }
+.ticker span:nth-child(6n+5)::before { background: var(--c5); }
+.ticker span:nth-child(6n+6)::before { background: var(--c6); }
+@keyframes ticker { to { translate: -50% 0; } }
+
+.top.paused *, .top.paused *::before, .top.paused *::after { animation-play-state: paused !important; }
 
 /* Distribución */
 .layout {
@@ -301,7 +375,11 @@ input:disabled + span { opacity: .55; }
 .dock .primary { flex: 1; }
 @media (min-width: 960px) { .dock { display: none; } }
 @media (max-width: 520px) { .sec { padding: 1.25rem 1.1rem; border-radius: 16px; } }
-@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; }
+  .top *, .top *::before, .top *::after { animation: none !important; }
+  #dabToggle { display: none; }
+}
 [hidden] { display: none !important; }
 .modo-lab { padding: 0; margin-bottom: .6rem; font: 500 .75rem/1 var(--f-mono); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -311,10 +389,13 @@ input:disabled + span { opacity: .55; }
 .src { padding-block: 0 2rem; font-size: .85rem; color: var(--muted); }
 .src p { margin: 0; max-width: 70ch; }
 .src a { color: var(--accent); }
+.src p + p { margin-top: .6rem; }
+.src .lic { color: var(--ink); }
 @media (max-width: 959px) { .src { padding-bottom: 6rem; } }
 </style>
 
-<header class="top">
+<header class="top" id="top">
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="wrap hero">
     <div>
       <p class="eyebrow">Para docentes de ELE</p>
@@ -331,8 +412,23 @@ input:disabled + span { opacity: .55; }
       </div>
       <p class="note" id="exampleNote" hidden>Ejemplo cargado. Cambia cualquier opción o pulsa «Empezar de cero».</p>
     </div>
-    <div class="dabs" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="dabwrap" id="dabwrap">
+      <div class="vf" aria-hidden="true">
+        <b class="corner tl"></b><b class="corner tr"></b><b class="corner bl"></b><b class="corner br"></b>
+        <div class="stage">
+          <span class="rec"><i></i><span id="recLabel">IMAGEN</span></span>
+          <span class="sun"></span>
+          <span class="cloud c1"></span><span class="cloud c2"></span>
+          <span class="hill a"></span><span class="hill b"></span>
+          <span class="drop d1"></span><span class="drop d2"></span><span class="drop d3"></span><span class="drop d4"></span>
+          <span class="scan"></span>
+        </div>
+      </div>
+      <p class="typed" aria-hidden="true"><b>Escena:</b> <span id="typed"></span></p>
+      <button type="button" class="btn ghost" id="dabToggle" aria-pressed="false">Pausar animación</button>
+    </div>
   </div>
+  <div class="ticker" aria-hidden="true"><div class="track"><span>Vocabulario</span><span>Describir y conversar</span><span>Buscar las diferencias</span><span>Narrar</span><span>Cómic para ordenar</span><span>Cómic con bocadillos vacíos</span><span>Situación comunicativa</span><span>Cultura</span><span>Gramática</span><span>Personaje histórico</span><span>Portada de unidad</span><span>Imagen y vídeo</span><span>Vocabulario</span><span>Describir y conversar</span><span>Buscar las diferencias</span><span>Narrar</span><span>Cómic para ordenar</span><span>Cómic con bocadillos vacíos</span><span>Situación comunicativa</span><span>Cultura</span><span>Gramática</span><span>Personaje histórico</span><span>Portada de unidad</span><span>Imagen y vídeo</span></div></div>
 </header>
 
 <main class="wrap layout">
@@ -589,6 +685,7 @@ input:disabled + span { opacity: .55; }
 
 <footer class="wrap src">
   <p>Datos de las herramientas de vídeo revisados el 30 de octubre de 2026 en la ayuda de Google: <a href="https://support.google.com/flow/answer/16352836" target="_blank" rel="noopener">Flow</a>, <a href="https://support.google.com/docs/answer/16143507" target="_blank" rel="noopener">Vids</a> y <a href="https://support.google.com/gemini/answer/16126339" target="_blank" rel="noopener">Gemini</a>. Pueden cambiar.</p>
+  <p class="lic">© 2026 Marta Sanz Manzanedo. Esta herramienta se comparte con licencia <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>: puedes usarla y adaptarla citando la autoría, sin fines comerciales y con la misma licencia.</p>
 </footer>
 
 <div class="dock">
@@ -1104,6 +1201,7 @@ input:disabled + span { opacity: .55; }
     var cor = $("avoid-cortes");
     if (cor) cor.closest(".check").hidden = !vid;
     $("h1word").textContent = vid ? "vídeo" : "imagen";
+    $("recLabel").textContent = vid ? "VÍDEO" : "IMAGEN";
     $("temaLabel").textContent = vid ? "¿Qué ocurre en el vídeo?" : "¿Qué debe mostrar la imagen?";
     $("temaHint").textContent = vid ? "Es el único dato obligatorio. Describe quién está, dónde y qué hace." : "Es el único dato obligatorio. Describe lugar, acciones y momento.";
     $("tema").placeholder = vid ? TEMA_PH.video : TEMA_PH.imagen;
@@ -1573,6 +1671,50 @@ input:disabled + span { opacity: .55; }
   $("goPanel").addEventListener("click", function () {
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     $("panel").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  });
+
+  /* ---------- Cabecera animada: escena que se escribe y pausa ---------- */
+  var TYPED = [
+    "Un mercado de barrio un sábado por la mañana, con puestos de fruta",
+    "Dos amigos se encuentran en una cafetería y piden algo de beber",
+    "Una cocina familiar con los objetos básicos del día a día",
+    "Cómic de cuatro viñetas para ordenar la historia",
+    "Dos versiones de la misma plaza: ¿cuántas diferencias hay?"
+  ];
+  var reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var typedEl = $("typed");
+  var ti = 0, tc = 0, tdel = false, tTimer = null;
+
+  function typeRunning() {
+    return !reduceMotion && !document.hidden && !$("top").classList.contains("paused");
+  }
+  function typeStep() {
+    if (!typeRunning()) return;
+    var s = TYPED[ti];
+    if (!tdel) {
+      tc++;
+      typedEl.textContent = s.slice(0, tc);
+      if (tc >= s.length) { tdel = true; tTimer = setTimeout(typeStep, 2000); return; }
+      tTimer = setTimeout(typeStep, 42);
+    } else {
+      tc = Math.max(0, tc - 2);
+      typedEl.textContent = s.slice(0, tc);
+      if (tc === 0) { tdel = false; ti = (ti + 1) % TYPED.length; tTimer = setTimeout(typeStep, 380); return; }
+      tTimer = setTimeout(typeStep, 16);
+    }
+  }
+  function typeKick() {
+    clearTimeout(tTimer);
+    if (typeRunning()) tTimer = setTimeout(typeStep, 150);
+  }
+  document.addEventListener("visibilitychange", typeKick);
+  if (reduceMotion) { typedEl.textContent = TYPED[0]; } else { typeKick(); }
+
+  $("dabToggle").addEventListener("click", function () {
+    var p = $("top").classList.toggle("paused");
+    this.setAttribute("aria-pressed", p ? "true" : "false");
+    this.textContent = p ? "Reanudar animación" : "Pausar animación";
+    typeKick();
   });
 
   /* ---------- Arranque con un ejemplo ---------- */
